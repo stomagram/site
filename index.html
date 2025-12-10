@@ -59,13 +59,189 @@
         .nav-btn { background: none; border: none; color: #fff; font-size: 28px; cursor: pointer; padding: 8px 16px; }
         .nav-btn.active { color: #0095f6; }
         
-        .search-popup { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 200; }
-        .search-content { background: #111; padding: 20px; border-radius: 12px; text-align: center; width: 80%; max-width: 300px; }
-        .search-content h2 { margin-bottom: 15px; }
-        .search-content ul { list-style: none; padding: 0; margin: 0 0 15px 0; }
-        .search-content li { margin: 6px 0; font-weight: 600; }
-        .search-content button { background: #0095f6; border: none; padding: 8px 16px; border-radius: 8px; color: #fff; font-weight: 600; cursor: pointer; }
+        /* SEARCH POPUP VE MEKTUP CSS - DÜZELTİLMİŞ HALİ */
+        .search-popup { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #323641; display: none; justify-content: center; align-items: center; z-index: 200; flex-direction: column; }
         
+        .letter-image {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            cursor: pointer;
+            z-index: 205;
+        }
+
+        .animated-mail {
+            position: absolute;
+            height: 150px;
+            width: 200px;
+            transition: .4s;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .animated-mail .body {
+            position: absolute;
+            bottom: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 0 100px 200px;
+            border-color: transparent transparent #e95f55 transparent;
+            z-index: 2;
+        }
+
+        .animated-mail .top-fold {
+            position: absolute;
+            top: 50px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 50px 100px 0 100px;
+            transform-origin: 50% 0%;
+            transition: transform .4s .4s, z-index .2s .4s;
+            border-color: #cf4a43 transparent transparent transparent;
+            z-index: 2;
+        }
+
+        .animated-mail .back-fold {
+            position: absolute;
+            bottom: 0;
+            width: 200px;
+            height: 100px;
+            background: #cf4a43;
+            z-index: 0;
+        }
+
+        .animated-mail .left-fold {
+            position: absolute;
+            bottom: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 50px 0 50px 100px;
+            border-color: transparent transparent transparent #e95f55;
+            z-index: 2;
+        }
+
+        .animated-mail .letter {
+            left: 20px;
+            bottom: 0px;
+            position: absolute;
+            width: 160px;
+            height: 60px;
+            background: white;
+            z-index: 1;
+            overflow: hidden;
+            transition: .4s .2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .animated-mail .letter .letter-border {
+            height: 10px;
+            width: 100%;
+            background: repeating-linear-gradient(-45deg, #cb5a5e, #cb5a5e 8px, transparent 8px, transparent 18px);
+            position: absolute;
+            top: 0;
+        }
+
+        .animated-mail .letter .letter-title {
+            margin-top: 10px;
+            margin-left: 5px;
+            height: 10px;
+            width: 40%;
+            background: #cb5a5e;
+            display: none; /* Metin olduğu için şeritleri gizledim */
+        }
+        
+        .animated-mail .letter .letter-context {
+            color: #333;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 900;
+            font-size: 16px;
+            line-height: 1.4;
+            margin-top: 10px;
+        }
+
+        .animated-mail .letter .letter-stamp {
+            margin-top: 30px;
+            margin-left: 120px;
+            border-radius: 100%;
+            height: 30px;
+            width: 30px;
+            background: #cb5a5e;
+            opacity: 0.3;
+            position: absolute;
+            right: 5px;
+            bottom: 5px;
+        }
+
+        .shadow {
+            position: absolute;
+            top: 200px;
+            left: 50%;
+            width: 400px;
+            height: 30px;
+            transition: .4s;
+            transform: translateX(-50%);
+            border-radius: 100%;
+            background: radial-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.0), rgba(0,0,0,0.0));
+            z-index: 204;
+        }
+
+        /* Hover ve Click Animasyonları */
+        .letter-image:hover .animated-mail, 
+        .letter-image.open .animated-mail {
+            transform: translate(-50%, -50px);
+        }
+
+        .letter-image:hover .animated-mail .top-fold, 
+        .letter-image.open .animated-mail .top-fold {
+            transition: transform .4s, z-index .2s;
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+
+        .letter-image:hover .animated-mail .letter, 
+        .letter-image.open .animated-mail .letter {
+            height: 180px;
+            z-index: 2; /* Mektup açılınca öne gelsin */
+        }
+
+        .letter-image:hover .shadow, 
+        .letter-image.open .shadow {
+            width: 250px;
+        }
+
+        .close-btn-container {
+            margin-top: 80px;
+            z-index: 210;
+        }
+
+        .close-btn-container button {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+        }
+
+        .instruction-text {
+            color: rgba(255,255,255,0.5);
+            margin-top: 20px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        /* ------------------------------------ */
+
         .double-heart { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(0.2); font-size: 120px; pointer-events: none; opacity: 0; transition: transform 450ms cubic-bezier(.2,.8,.2,1), opacity 450ms; text-shadow: 0 6px 18px rgba(0,0,0,0.6); z-index: 800; }
         .double-heart.show { transform: translate(-50%, -50%) scale(1); opacity: 1; animation: heartPop 700ms forwards; color: #ff2d55; }
         @keyframes heartPop { 0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; } 30% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; } 60% { transform: translate(-50%, -50%) scale(0.95); } 100% { transform: translate(-50%, -50%) scale(1); opacity: 0; } }
@@ -95,6 +271,752 @@
         .reel-follow { border: 1px solid rgba(255,255,255,0.6); background: none; color: #fff; font-size: 12px; padding: 4px 10px; border-radius: 4px; font-weight: 600; margin-left: 5px; }
         .reel-description { font-size: 14px; line-height: 1.3; margin-bottom: 10px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); max-height: 60px; overflow: hidden; }
         .music-ticker { display: flex; align-items: center; gap: 8px; font-size: 13px; background: rgba(0,0,0,0.4); padding: 4px 12px; border-radius: 20px; width: fit-content; }
+
+        .reel-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 32px;
+            height: 32px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s linear infinite;
+            z-index: 55;
+            display: none; 
+            pointer-events: none;
+        }
+
+        .volume-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            padding: 15px;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 65;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 70px;
+        }
+        
+        .volume-icon.show {
+            opacity: 1;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* YENİ EKLENEN REELS REFRESH LOADER CSS */
+        #reels-refresh-loader {
+            position: fixed;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: #0095f6; /* Instagram mavisi */
+            border-radius: 50%;
+            z-index: 200;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #reels-refresh-loader.visible {
+            opacity: 1;
+            transform: translateX(-50%) scale(1.2);
+        }
+
+        #reels-refresh-loader.spinning {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+            animation: spin 0.8s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="preloader">
+        <div class="loader-content">
+            <p>YÜKLENİYOR</p>
+            <div id="loading-tip"></div>
+            <div class="loader-dots"><div></div><div></div><div></div></div>
+        </div>
+    </div>
+
+    <div id="offline-banner">İnternet Bağlantısı Yok ⚠️</div>
+    <div id="reels-refresh-loader"></div>
+    
+    <div id="main-content">
+        <div class="container">
+            <div class="sound-tutorial-overlay" id="soundTutorialOverlay">
+                <div class="tutorial-content">
+                    <p>🔊 Buradan sesi açıp kapatabilirsiniz!</p>
+                    <button onclick="closeSoundTutorial()">Anladım</button>
+                </div>
+            </div>
+
+            <div class="header" id="mainHeader">
+                <div class="time" id="time">16:39</div>
+                <div class="producer">Yapımcı: Sude Naz Türkeli</div>
+                <button id="soundToggle" class="sound-btn">🔇</button>
+            </div>
+
+            <div class="posts-container" id="postsContainer"></div>
+
+            <div id="reels-view"></div>
+
+            <div class="bottom-nav">
+                <button class="nav-btn active" data-action="home">🏠</button>
+                <button class="nav-btn" data-action="search">🔍</button>
+                <button class="nav-btn" data-action="add">➕</button>
+                <button class="nav-btn" data-action="reels">▶️</button>
+                <button class="nav-btn" data-action="profile">👤</button>
+            </div>
+
+            <div class="search-popup" id="searchPopup">
+                <div class="letter-image" onclick="toggleLetter(this)">
+                    <div class="animated-mail">
+                        <div class="back-fold"></div>
+                        <div class="letter">
+                            <div class="letter-border"></div>
+                            <div class="letter-title"></div>
+                            <div class="letter-context">SUDE NAZ<br>TÜRKELİ</div>
+                            <div class="letter-stamp">
+                                <div class="letter-stamp-inner"></div>
+                            </div>
+                        </div>
+                        <div class="top-fold"></div>
+                        <div class="body"></div>
+                        <div class="left-fold"></div>
+                    </div>
+                    <div class="shadow"></div>
+                </div>
+                <div class="instruction-text">Mektubu Açmak İçin Dokun</div>
+                <div class="close-btn-container">
+                    <button onclick="closeSearch()">Kapat</button>
+                </div>
+            </div>
+        </div> 
+    </div>
+    <script>
+        const posts = [
+            {avatar:'sude_naz.jpg',user:'sude_naz',subtitle:'Eğitim İçeriği',img:'post1.png',audio:'post1music.mp3',likes:1234,caption:'Sadece stomalı bireyler değil herkesin sağlıklı beslenmeye dikkat etmesi, öğünlerini planlaması ve sağlıksız besinlerden kaçınması gerekmektedir.',comments:45,comment:'burcin_hoca mükemmel olmuş 👏',time:'2 saat önce'},
+            {avatar:'zeynep.jpg',user:'zeynep',subtitle:'Eğitim İçeriği',img:'post2.jpg',audio:'post2music.mp3',likes:1134,caption:'Her kişinin yiyeceklere karşı verdiği tepkiler ve toleransı farklıdır. Diyet insandan insana fizyolojik ihtiyaçlar-gereksinimler-karşılama gücü ve isteklere göre değişiklik göstermektedir. Gıdalar da ilaçlar gibidir. Size iyi gelen bana iyi gelmeyebilir!',comments:77,time:'4 saat önce'},
+            {avatar:'irem_sude.jpg',user:'irem_sude',subtitle:'Eğitim İçeriği',img:'post3.jpg',audio:'post3music.mp3',likes:3789,caption:'Lifli gıdaların az tüketilmesi ishale, çok tüketilmesi tıkaca sebep olabilir. Stomalı bireyler öğünlerini kendi beslenme alışkanlıklarını keşfederek hazırlamalı ve bir profesyonel eşliğinde diyetini sürdürmelidir.',comments:89,time:'45 dakika önce'},
+            {avatar:'nisanur.jpg',user:'nisanur',subtitle:'Eğitim İçeriği',img:'post4.jpg',audio:'post4music.mp3',likes:4123,caption:'Stomalı bireylerde iyi çiğneme, gıdanın sindirime uygun kıvama getirilmesini sağlayarak stoma çıkışında tıkanma riskini azaltır. Yetersiz çiğnenmiş besinler özellikle lifli ve sert yapılı gıdalarda lümeni mekanik olarak tıkayıp karın ağrısı, bulantı ve distansiyona yol açabilir.',comments:92,time:'30 dakika önce'},
+            {avatar:'sude.jpg',user:'sude',subtitle:'Eğitim İçeriği',img:'post5.jpg',audio:'post5music.mp3',likes:5567,caption:'Stomalı bireyler hangi besinin aşırı gaz, kabızlık, ishal ya da koku gibi yan etkilere neden olduğunu öğrenmeli. Besinler rahatsızlık veriyorlarsa 1 hafta tüketilmemeli ve sonra tekrar denenmeli.',comments:134,time:'15 dakika önce'},
+            {avatar:'sude_naz.jpg',user:'sude_naz',subtitle:'Eğitim İçeriği',img:'post6.jpg',audio:'post6music.mp3',likes:6234,caption:'Gaz yapan besinlerin tüketiminden sakınmaya ek olarak: 1- Yemek yerken konuşmama, ağız açık yemek yememe, 2- öğünleri yavaş ve küçük lokmalar halinde tüketme, 3- Az ve sık beslenme, uygulamaları yapılabilir. Sağlıklı günler dileriz!',comments:156,comment:'burcin_hoca Aferin Zeynep 👏',time:'10 dakika önce'},
+            {avatar:'zeynep.jpg',user:'zeynep',subtitle:'Eğitim İçeriği',img:'post7.jpg',audio:'post7music.mp3',likes:7891,caption:'Egzersiz (yürüyüş vb.) tıkaç oluşumuna iyi gelir. Böylelikle rahatsızlık hissetmezsiniz. Stomanıza uygun bir bakım yaparsanız egzersizi gönül rahatlığıyla yapabilirsiniz.',comments:178,time:'5 dakika önce'},
+            {avatar:'irem_sude.jpg',user:'irem_sude',subtitle:'Eğitim İçeriği',img:'post8.jpg',audio:'post8music.mp3',likes:8345,caption:'Yiyecek toleransı kişiden kişiye değişebilmektedir. İnsanlar aynı besinlere, aynı tepkileri vermez: Hangi besinlerden kaçınmak gerektiğini stomalı bireyler kendi deneyimleriyle öğrenir. bir çalışmada stomalı bir bireyin yoğurt için dedikleri dikkat çekmektedir: "Yoğurt yiyin diyorlar ama beni rahatsız ediyor, yiyemiyorum. Herkeste aynı değil ki..."',comments:201,comment:'burcin_hoca çok iyi yapmışsın 👏',time:'3 dakika önce'},
+            {avatar:'nisanur.jpg',user:'nisanur',subtitle:'Eğitim İçeriği',img:'post9.jpg',audio:'post9music.mp3',likes:9456,caption:'Sağlıklı bir bağırsaktan günde 100 ml, intestinal stomalı bireylerde normalden 1-2L fazla sıvı kaybı olabilmektedir. Kısaca, bağırsaklardan normalden daha fazla sıvı kaybedilir. Bu yüzden bol miktarda sıvı almak önemlidir.',comments:223,comment:'burcin_hoca mükemmel olmuş 👏',time:'2 dakika önce'},
+            {avatar:'sude.jpg',user:'sude',subtitle:'Eğitim İçeriği',img:'post10.jpg',audio:'post10music.mp3',likes:10567,caption:'Kilo alımı genellikle uygunsuz bir diyetin sonucu gerçekleşir. Stomalı bireyler Stoma sağlığı için kilolarına dikkat etmek durumundadır. Kilo alımı stomada bazı komplikasyonlara yol açabilir.',comments:245,time:'1 dakika önce'},
+            {avatar:'sude_naz.jpg',user:'sude_naz',subtitle:'Eğitim İçeriği',img:'post11.jpg',audio:'post11music.mp3',likes:11234,caption:'Hayırlı Cumalar 🥀🕊️',comments:267,time:'Şimdi'},
+            {avatar:'zeynep.jpg',user:'zeynep',subtitle:'Eğitim İçeriği',img:'post12.jpg',audio:'post12music.mp3',likes:12456,caption:'Yağlı besinler gerek içerdiği yüksek yağ ve trans yağ oranlarıyla gerekse kilo yapımı, kolesterol gibi etkilere neden olmaları dolayısıyla uzak durulması gereken besinler arasındadır.',comments:289,time:'Şimdi'}
+        ];
+        
+        const reels = [
+            {video:'reels1.mp4',avatar:'sude_naz.jpg',user:'sude_naz',likes:'15K',comments:'234',desc:'Kameramıza karşı itiraflar alıyoruz. #stoma #ünlü'},
+            {video:'reels2.mp4',avatar:'zeynep.jpg',user:'zeynep',likes:'33K',comments:'1K',desc:'Her kişinin öğrenme şekli farklıdır. #stomagram #farkındalık'},
+            {video:'reels3.mp4',avatar:'manav.jpg',user:'manav_abdulkadir',likes:'12K',comments:'550',desc:'Meyve dediğin böyle olacak! #sağlık #beslenme'},
+            {video:'reels4.mp4',avatar:'nisanur.jpg',user:'nisanur',likes:'5K',comments:'120',desc:'Su içmeyi sakın unutmayın! #tavsiye'},
+            {video:'reels5.mp4',avatar:'sude.jpg',user:'sude',likes:'89K',comments:'2K',desc:'Boğa burçları dikkat ⚠️☝️ #günlük #burcyorumlari'},
+            {video:'reels6.mp4',avatar:'sude_naz.jpg',user:'sude_naz',likes:'42K',comments:'900',desc:'Egzersiz yapmak sindirimi kolaylaştırır.'},
+            {video:'reels7.mp4',avatar:'zeynep.jpg',user:'zeynep',likes:'11K',comments:'340',desc:'🤨 #wolf'},
+            {video:'reels8.mp4',avatar:'irem_sude.jpg',user:'irem_sude',likes:'26K',comments:'800',desc:'Besinleri iyi çiğnemek sindirimi kolaylaştırır.'},
+            {video:'reels9.mp4',avatar:'nisanur.jpg',user:'nisanur',likes:'67K',comments:'1.5K',desc:'🫡🫡 #ata'},
+            {video:'reels10.mp4',avatar:'sude_naz.jpg',user:'sude_naz',likes:'15K',comments:'234',desc:'😂😂 #stoma #komik'},
+            {video:'reels11.mp4',avatar:'zeynep.jpg',user:'zeynep',likes:'33K',comments:'1K',desc:'Sağlığınız için kilo alımınıza dikkat edin! #zayıflama #celalkedi'},
+            {video:'reels12.mp4',avatar:'irem_sude.jpg',user:'irem_sude',likes:'12K',comments:'550',desc:'Şeker ve fazla yağdan sağlığınız için uzak durun! #sağlık #beslenme'}
+        ];
+
+        const container = document.getElementById('postsContainer');
+        const reelsView = document.getElementById('reels-view');
+        
+        posts.sort(() => Math.random() - 0.5).forEach(p => {
+            const el = document.createElement('div');
+            el.className = 'post';
+            el.innerHTML = `
+                <div class="post-header">
+                    <div class="post-avatar" style="background-image:url('${p.avatar}')"></div>
+                    <div class="post-info">
+                        <div class="post-username">${p.user} <span class="verified">✓</span> <button class="follow-btn" onclick="toggleFollow(this)">Takip Et</button></div>
+                        <div class="post-subtitle">${p.subtitle}</div>
+                    </div>
+                    <div class="post-menu">⋮</div>
+                </div>
+                <div class="post-content">
+                    <img src="${p.img}" class="post-image">
+                    <audio class="post-audio" loop muted><source src="${p.audio}" type="audio/mp3"></audio>
+                </div>
+                <div class="post-actions">
+                    <div class="action-group">
+                        <button class="action-btn" onclick="likePost(this)">🤍</button>
+                        <button class="action-btn">💬</button>
+                        <button class="action-btn">📤</button>
+                    </div>
+                    <button class="action-btn" onclick="toggleSave(this)">🔖</button>
+                </div>
+                <div class="post-likes"><span class="likes-count">${p.likes.toLocaleString()}</span> beğenme</div>
+                <div class="post-caption" data-full-text="${p.caption}">
+                    <span class="username-caption">${p.user}</span>
+                    <span class="caption-text">${p.caption}</span>
+                </div>
+                <div class="post-comments">${p.comments} yorumun tümünü gör</div>
+                ${p.comment ? `<div class="post-comments">${p.comment}</div>` : ''}
+                <div class="post-time">${p.time}</div>
+            `;
+            container.appendChild(el);
+        });
+
+        // REELS OLUŞTURMA FONKSİYONU VE PULL-TO-REFRESH MANTIĞI
+        let currentReelList = [];
+
+        // Observer tanımları (Daha önce global tanımlanmalı ki fonksiyon içinde kullanılabilsin)
+        const reelsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const video = entry.target.querySelector('.reel-video');
+                if (!video) return;
+                if (entry.isIntersecting) {
+                    video.preload = "auto";
+                    video.currentTime = 0;
+                    video.muted = false; 
+                    video.play().catch(e => console.log("Reel autoplay engellendi"));
+                    const nextReel = entry.target.nextElementSibling;
+                    if (nextReel) {
+                        const nextVideo = nextReel.querySelector('.reel-video');
+                        if (nextVideo) nextVideo.preload = "auto";
+                    }
+                } else {
+                    video.pause();
+                    video.currentTime = 0;
+                    video.preload = "none";
+                }
+            });
+        }, { threshold: 0.6 });
+
+        // Reels verilerini ekrana basan fonksiyon
+        function renderReelsData() {
+            reelsView.innerHTML = ''; // Mevcut içeriği temizle
+            
+            // Listeyi karıştır
+            reels.sort(() => Math.random() - 0.5).forEach(r => {
+                const el = document.createElement('div');
+                el.className = 'reel-container';
+                el.innerHTML = `
+                    <video class="reel-video reel-bg" src="${r.video}" loop playsinline preload="none"></video>
+                    <div class="reel-overlay"></div>
+                    <div class="reel-loader"></div>
+                    <div class="volume-icon">🔇</div>
+                    <div class="reel-actions">
+                        <button class="reel-btn" onclick="likeReel(this)">🤍 <span>${r.likes}</span></button>
+                        <button class="reel-btn">💬 <span>${r.comments}</span></button>
+                        <button class="reel-btn">📤 <span>Paylaş</span></button>
+                        <button class="reel-btn">⋯</button>
+                    </div>
+                    <div class="reel-info">
+                        <div class="reel-user">
+                            <div class="reel-avatar" style="background-image:url('${r.avatar}')"></div>
+                            <span class="reel-username">${r.user}</span>
+                            <button class="reel-follow">Takip Et</button>
+                        </div>
+                        <div class="reel-description">${r.desc}</div>
+                        <div class="music-ticker">🎵 Orijinal Ses - ${r.user}</div>
+                    </div>
+                `;
+                
+                // Eventleri ve Gözlemciyi yeniden bağla
+                setupReelEvents(el);
+                attachDoubleTap(el);
+                reelsObserver.observe(el);
+                reelsView.appendChild(el);
+            });
+
+            // Sonsuz döngü listesini güncelle
+            currentReelList = Array.from(document.querySelectorAll('.reel-container'));
+        }
+
+        // Başlangıçta Reels'leri yükle
+        renderReelsData();
+
+        // Reels Eventlerini Ayarlayan Fonksiyon
+        function setupReelEvents(container) {
+            const video = container.querySelector('.reel-video');
+            const loader = container.querySelector('.reel-loader');
+            const volumeIcon = container.querySelector('.volume-icon');
+
+            // 1. Loading Durumu (Buffering)
+            video.addEventListener('waiting', () => {
+                loader.style.display = 'block';
+            });
+            video.addEventListener('playing', () => {
+                loader.style.display = 'none';
+            });
+
+            // 2. Tıklayınca Ses Aç/Kapat (Toggle Mute)
+            container.addEventListener('click', (e) => {
+                // Eğer butonlara tıklanırsa çalışmasın
+                if (e.target.closest('.reel-btn') || e.target.closest('.reel-follow')) return;
+
+                // Ses durumunu değiştir
+                video.muted = !video.muted;
+                
+                // İkonu göster
+                volumeIcon.textContent = video.muted ? "🔇" : "🔊";
+                volumeIcon.classList.add('show');
+                
+                // 1 saniye sonra ikonu gizle
+                setTimeout(() => {
+                    volumeIcon.classList.remove('show');
+                }, 1000);
+            });
+        }
+
+        let soundEnabled = false, currentPostList = [];
+        
+        const tips = [
+            "Sude Naz T. bu projeye 60 saatten fazla zaman harcadı.",
+            "Burçin hoca bizce bize yüksek not verecek ❤️", 
+            "Dengeli beslenmek için bir diyetisyenle görüşün.",
+            "Stomalı bireyler gaz çıkışını kontrol edemez.",
+            "Stoma varlığı bir hastalık değildir.",
+            "Stoma bakımını aksatmayınız.",
+            "Dengeli beslenmek sağlığın temelidir.",
+            "Her gün 1-2L su içmek sağlığa yararlıdır.",
+            "Stomanızla barışık olun. (opsiyonel)",
+            "Yükleme ekranında 10 farklı bilgi vardır."
+        ];
+        
+        let tipIndex = 0, tipInterval;
+        
+        function displayTip() {
+            const el = document.getElementById('loading-tip');
+            el.style.opacity = 0;
+            setTimeout(() => {
+                el.innerHTML = `<strong>Bunu Biliyor Muydunuz:</strong> ${tips[tipIndex]}`;
+                el.style.opacity = 1;
+                tipIndex = (tipIndex + 1) % tips.length;
+            }, 500);
+        }
+
+        const initialEl = document.getElementById('loading-tip');
+        initialEl.innerHTML = `<strong>Bunu Biliyor Muydunuz:</strong> ${tips[0]}`;
+        initialEl.style.opacity = 1;
+        tipIndex = 1;
+
+        tipInterval = setInterval(displayTip, 2500);
+
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            const mainContent = document.getElementById('main-content');
+            const videosToPreloadCount = 2;
+            const allReels = document.querySelectorAll('.reel-video');
+            let loadedCount = 0, appStarted = false;
+
+            function startApp() {
+                if (appStarted) return;
+                appStarted = true;
+                if (tipInterval) clearInterval(tipInterval);
+                mainContent.style.display = 'flex';
+                preloader.classList.add('hidden');
+                setTimeout(() => preloader.style.display = 'none', 500);
+            }
+
+            function checkVideoLoaded() {
+                loadedCount++;
+                if (loadedCount >= videosToPreloadCount) startApp();
+            }
+
+            if (allReels.length === 0) {
+                startApp();
+            } else {
+                const limit = Math.min(allReels.length, videosToPreloadCount);
+                for (let i = 0; i < limit; i++) {
+                    const video = allReels[i];
+                    video.preload = "auto";
+                    video.onloadeddata = checkVideoLoaded;
+                    if (video.readyState >= 3) checkVideoLoaded();
+                }
+            }
+            setTimeout(() => { if (!appStarted) startApp(); }, 5000);
+        });
+
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        function updateOnlineStatus() {
+            document.getElementById('offline-banner').style.display = !navigator.onLine ? 'block' : 'none';
+        }
+        updateOnlineStatus();
+
+        function updateTime() {
+            const el = document.getElementById("time");
+            const now = new Date();
+            let h = now.getHours(), m = now.getMinutes();
+            if (h < 10) h = "0" + h;
+            if (m < 10) m = "0" + m;
+            el.textContent = h + ":" + m;
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        function toggleFollow(btn) {
+            btn.classList.toggle('following');
+            btn.textContent = btn.classList.contains('following') ? 'Takip Ediliyor' : 'Takip Et';
+            btn.style.color = btn.classList.contains('following') ? '#a8a8a8' : '#0095f6';
+            event.stopPropagation();
+        }
+
+        function likePost(btn) {
+            btn.classList.toggle("liked");
+            const likesSpan = btn.closest('.post').querySelector('.likes-count');
+            let count = parseInt(likesSpan.textContent.replace(/,/g, ''));
+            if (btn.classList.contains("liked")) {
+                btn.textContent = "❤️";
+                count += 1;
+            } else {
+                btn.textContent = "🤍";
+                count -= 1;
+            }
+            likesSpan.textContent = count.toLocaleString();
+        }
+
+        function toggleSave(btn) {
+            const isSaved = btn.classList.toggle('saved');
+            btn.textContent = isSaved ? '🏷️' : '🔖';
+        }
+
+        function likeReel(btn) {
+            btn.classList.toggle("liked");
+            let textSpan = btn.querySelector('span');
+            let text = textSpan.textContent;
+            if (btn.classList.contains("liked")) {
+                btn.innerHTML = `❤️ <span>${text}</span>`;
+                btn.style.color = '#ed4956';
+            } else {
+                btn.innerHTML = `🤍 <span>${text}</span>`;
+                btn.style.color = '#fff';
+            }
+        }
+
+        function showHeart(el) {
+            let heart = document.createElement('div');
+            heart.className = 'double-heart';
+            heart.innerHTML = '❤️';
+            el.appendChild(heart);
+            void heart.offsetWidth;
+            heart.classList.add('show');
+            setTimeout(() => {
+                heart.classList.remove('show');
+                setTimeout(() => { if (heart.parentElement) heart.parentElement.removeChild(heart); }, 500);
+            }, 800);
+        }
+
+        function attachDoubleTap(el) {
+            let lastTap = 0;
+            el.addEventListener('dblclick', (e) => {
+                showHeart(el);
+                const post = el.closest('.post');
+                const reel = el.closest('.reel-container');
+                if (post) {
+                    const likeBtn = post.querySelector('.action-group .action-btn');
+                    if (likeBtn && !likeBtn.classList.contains('liked')) likePost(likeBtn);
+                }
+                if (reel) {
+                    const likeBtn = reel.querySelector('.reel-actions .reel-btn:first-child');
+                    if (likeBtn && !likeBtn.classList.contains('liked')) likeReel(likeBtn);
+                }
+            });
+            el.addEventListener('touchend', function(e) {
+                const currentTime = Date.now();
+                const tapLength = currentTime - lastTap;
+                if (tapLength < 300 && tapLength > 0) {
+                    e.preventDefault();
+                    showHeart(el);
+                    const post = el.closest('.post');
+                    const reel = el.closest('.reel-container');
+                    if (post) {
+                        const likeBtn = post.querySelector('.action-group .action-btn');
+                        if (likeBtn && !likeBtn.classList.contains('liked')) likePost(likeBtn);
+                    }
+                    if (reel) {
+                        const likeBtn = reel.querySelector('.reel-actions .reel-btn:first-child');
+                        if (likeBtn && !likeBtn.classList.contains('liked')) likeReel(likeBtn);
+                    }
+                }
+                lastTap = currentTime;
+            });
+        }
+        document.querySelectorAll('.post-content').forEach(el => attachDoubleTap(el));
+        
+        // Reels için attachDoubleTap fonksiyonu zaten renderReelsData içinde çağrılıyor.
+
+        const soundToggle = document.getElementById("soundToggle");
+        const postsContainer = document.getElementById("postsContainer");
+
+        function managePostAudio(post, shouldPlay) {
+            if (document.getElementById('reels-view').style.display === 'block') return;
+            const audio = post.querySelector(".post-audio");
+            if (!audio) return;
+            if (shouldPlay) {
+                audio.muted = !soundEnabled;
+                audio.volume = 0.6;
+                audio.play().catch(e => console.log("Oynatma engellendi"));
+            } else {
+                audio.pause();
+                audio.currentTime = 0;
+            }
+        }
+
+        const feedObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => managePostAudio(entry.target, entry.isIntersecting));
+        }, { threshold: 0.6 });
+        document.querySelectorAll('.post').forEach(post => feedObserver.observe(post));
+
+        soundToggle.addEventListener("click", () => {
+            soundEnabled = !soundEnabled;
+            soundToggle.textContent = soundEnabled ? "🔊" : "🔇";
+            document.querySelectorAll(".post").forEach(post => {
+                const rect = post.getBoundingClientRect();
+                if (rect.bottom > 0 && rect.top < window.innerHeight) managePostAudio(post, true);
+            });
+        });
+
+        const navButtons = document.querySelectorAll(".nav-btn");
+        const searchPopup = document.getElementById("searchPopup");
+        const reelsViewEl = document.getElementById("reels-view");
+        const mainHeader = document.getElementById("mainHeader");
+
+        navButtons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const action = btn.getAttribute("data-action");
+                if (action === "search") {
+                    searchPopup.style.display = "flex";
+                    // Reset letter state
+                    const letter = document.querySelector('.letter-image');
+                    letter.classList.remove('open');
+                    return;
+                }
+                navButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll(".post-audio").forEach(a => { a.pause(); a.currentTime = 0; });
+                document.querySelectorAll(".reel-video").forEach(v => { v.pause(); v.currentTime = 0; });
+                if (action === "home") {
+                    postsContainer.style.display = "block";
+                    reelsViewEl.style.display = "none";
+                    mainHeader.style.display = "flex";
+                    postsContainer.scrollTo({ top: 0, behavior: 'smooth' });
+                } else if (action === "reels") {
+                    postsContainer.style.display = "block";
+                    reelsViewEl.style.display = "block";
+                    mainHeader.style.display = "none";
+                    reelsViewEl.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    navButtons.forEach(b => b.classList.remove('active'));
+                    document.querySelector('[data-action="home"]').classList.add('active');
+                }
+            });
+        });
+
+        function closeSearch() { 
+            searchPopup.style.display = "none"; 
+        }
+
+        function toggleLetter(element) {
+            element.classList.toggle('open');
+        }
+
+        function closeSoundTutorial() {
+            document.getElementById("soundTutorialOverlay").style.display = "none";
+            soundToggle.style.animation = "none";
+            document.body.style.overflow = '';
+            localStorage.setItem('soundTutorialShown', 'true');
+        }
+
+        window.addEventListener('load', () => {
+            if (localStorage.getItem('soundTutorialShown') !== 'true') {
+                setTimeout(() => {
+                    soundToggle.textContent = "🔇";
+                    soundToggle.style.animation = "pulse 1.5s infinite";
+                    document.getElementById("soundTutorialOverlay").style.display = "flex";
+                    document.body.style.overflow = 'hidden';
+                }, 500);
+            }
+        });
+
+        const MAX_LENGTH = 55;
+        function initializeCaptionTruncation() {
+            document.querySelectorAll('.post-caption').forEach(captionDiv => {
+                const textNode = captionDiv.querySelector('.caption-text');
+                if (!textNode) return;
+                const rawText = textNode.textContent.trim();
+                captionDiv.setAttribute('data-full-text', rawText);
+                if (rawText.length <= MAX_LENGTH) return;
+                const truncatedText = rawText.substring(0, MAX_LENGTH) + '...';
+                textNode.textContent = truncatedText;
+                const readMoreBtn = document.createElement('span');
+                readMoreBtn.className = 'read-more-btn';
+                readMoreBtn.textContent = 'devamını oku';
+                readMoreBtn.onclick = function(e) {
+                    const isExpanded = captionDiv.classList.toggle('expanded');
+                    if (isExpanded) {
+                        textNode.textContent = rawText;
+                        readMoreBtn.textContent = 'gizle';
+                    } else {
+                        textNode.textContent = truncatedText;
+                        readMoreBtn.textContent = 'devamını oku';
+                    }
+                    e.stopPropagation();
+                };
+                captionDiv.appendChild(readMoreBtn);
+            });
+        }
+        window.addEventListener('load', initializeCaptionTruncation);
+
+        setTimeout(() => { currentPostList = Array.from(document.querySelectorAll('.post')); }, 300);
+        
+        // currentReelList, renderReelsData içinde atanıyor.
+
+        postsContainer.addEventListener('scroll', () => {
+            if (postsContainer.scrollTop + postsContainer.clientHeight >= postsContainer.scrollHeight - 800) {
+                currentPostList.forEach(originalPost => {
+                    const clone = originalPost.cloneNode(true);
+                    feedObserver.observe(clone);
+                    attachDoubleTap(clone.querySelector('.post-content'));
+                    const saveBtn = clone.querySelector('.action-btn:last-child');
+                    if (saveBtn) {
+                        saveBtn.classList.remove('saved');
+                        saveBtn.textContent = '🔖';
+                    }
+                    container.appendChild(clone);
+                });
+            }
+        });
+
+        reelsViewEl.addEventListener('scroll', () => {
+            if (reelsViewEl.scrollTop + reelsViewEl.clientHeight >= reelsViewEl.scrollHeight - 400) {
+                currentReelList.forEach(originalReel => {
+                    const clone = originalReel.cloneNode(true);
+                    const video = clone.querySelector('.reel-video');
+                    if (video) {
+                        video.pause();
+                        video.currentTime = 0;
+                        video.muted = true;
+                        video.preload = "none";
+                    }
+                    reelsObserver.observe(clone);
+                    setupReelEvents(clone); 
+                    attachDoubleTap(clone);
+                    reelsView.appendChild(clone);
+                });
+            }
+        });
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                document.querySelectorAll(".post-audio").forEach(a => { a.pause(); a.currentTime = 0; });
+                document.querySelectorAll(".reel-video").forEach(v => { v.pause(); v.currentTime = 0; });
+            } else {
+                if (reelsViewEl.style.display !== 'block' && soundEnabled) {
+                    document.querySelectorAll('.post').forEach(post => {
+                        const rect = post.getBoundingClientRect();
+                        if (rect.bottom > 0 && rect.top < window.innerHeight) managePostAudio(post, true);
+                    });
+                }
+            }
+        });
+
+        let startY = 0, isPulling = false;
+        postsContainer.addEventListener("touchstart", (e) => {
+            if (postsContainer.scrollTop === 0) {
+                startY = e.touches[0].clientY;
+                isPulling = true;
+            }
+        });
+        postsContainer.addEventListener("touchmove", (e) => {
+            if (!isPulling) return;
+            let currentY = e.touches[0].clientY;
+            if ((currentY - startY) > 80) { location.reload(); isPulling = false; }
+        });
+        postsContainer.addEventListener("touchend", () => { isPulling = false; });
+
+        document.querySelectorAll(".action-btn").forEach(btn => {
+            if (btn.textContent.includes("📤")) {
+                btn.addEventListener("click", async () => {
+                    if (navigator.share) {
+                        try {
+                            await navigator.share({
+                                title: "Stomagram Postu",
+                                text: "Buna bir göz at! 👀",
+                                url: window.location.href
+                            });
+                        } catch (err) { console.log("Paylaşım iptal edildi:", err); }
+                    } else { alert("Cihazınız paylaşımı desteklemiyor."); }
+                });
+            }
+        });
+
+        /* --- REELS PULL-TO-REFRESH MANTIĞI --- */
+        const reelsLoader = document.getElementById('reels-refresh-loader');
+        let reelStartY = 0;
+        let isReelPulling = false;
+
+        reelsView.addEventListener('touchstart', (e) => {
+            if (reelsView.scrollTop === 0) {
+                reelStartY = e.touches[0].clientY;
+                isReelPulling = true;
+            }
+        }, {passive: true});
+
+        reelsView.addEventListener('touchmove', (e) => {
+            if (!isReelPulling) return;
+            const currentY = e.touches[0].clientY;
+            const pullDistance = currentY - reelStartY;
+
+            if (pullDistance > 0 && reelsView.scrollTop === 0) {
+                if (pullDistance > 60) {
+                    reelsLoader.classList.add('visible');
+                    if (navigator.vibrate && pullDistance === 61) navigator.vibrate(10);
+                } else {
+                    reelsLoader.classList.remove('visible');
+                }
+            } else {
+                isReelPulling = false;
+            }
+        }, {passive: true});
+
+        reelsView.addEventListener('touchend', (e) => {
+            if (!isReelPulling) return;
+            isReelPulling = false;
+            if (reelsLoader.classList.contains('visible')) {
+                reelsLoader.classList.remove('visible');
+                reelsLoader.classList.add('spinning'); 
+
+                setTimeout(() => {
+                    renderReelsData(); 
+                    reelsLoader.classList.remove('spinning');
+                    const firstVideo = document.querySelector('.reel-container:first-child .reel-video');
+                    if(firstVideo) {
+                        firstVideo.play().catch(()=>{});
+                        firstVideo.muted = false;
+                    }
+                }, 1200);
+            }
+        });
+    </script>
+</body>
+</html>
+ 4px 12px; border-radius: 20px; width: fit-content; }
 
         .reel-loader {
             position: absolute;
@@ -815,5 +1737,6 @@
     </script>
 </body>
 </html>
+
 
 
