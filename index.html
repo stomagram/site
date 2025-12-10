@@ -63,7 +63,7 @@
         .search-popup { 
             position: fixed; 
             top: 0; left: 0; right: 0; bottom: 0; 
-            background: rgba(0, 0, 0, 0.95); /* Arka planı koyu siyah yapar */
+            background: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(8px);
             display: flex; 
             flex-direction: column;
@@ -86,7 +86,7 @@
             color: #fff; 
             font-size: 24px; 
             letter-spacing: 4px; 
-            margin-bottom: 70px; /* Mektubun üstüne boşluk */
+            margin-bottom: 70px;
             font-weight: 300; 
             text-transform: uppercase;
             text-shadow: 0 2px 10px rgba(0,0,0,0.5);
@@ -117,6 +117,24 @@
         .animated-mail .letter .letter-context { color: #333; font-family: 'Courier New', Courier, monospace; font-weight: 900; font-size: 16px; line-height: 1.4; margin-top: 10px; }
         .animated-mail .letter .letter-stamp { margin-top: 30px; margin-left: 120px; border-radius: 100%; height: 30px; width: 30px; background: #cb5a5e; opacity: 0.3; position: absolute; right: 5px; bottom: 5px; }
         .shadow { position: absolute; top: 200px; left: 50%; width: 400px; height: 30px; transition: .4s; transform: translateX(-50%); border-radius: 100%; background: radial-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.0), rgba(0,0,0,0.0)); z-index: 2004; }
+
+        /* Zarfın Üzerindeki Yazı CSS */
+        .click-text {
+            position: absolute;
+            bottom: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.9);
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            z-index: 10;
+            pointer-events: none;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            transition: opacity 0.3s;
+        }
+
+        .letter-image.open .click-text { opacity: 0; }
 
         /* Mektup Açılma Halleri */
         .letter-image.open .animated-mail { transform: translate(-50%, -50px); }
@@ -201,7 +219,7 @@
             to { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
-        /* YENİ EKLENEN REELS REFRESH LOADER CSS */
+        /* REELS REFRESH LOADER CSS */
         #reels-refresh-loader {
             position: fixed;
             top: 50px;
@@ -210,7 +228,7 @@
             width: 30px;
             height: 30px;
             border: 3px solid rgba(255,255,255,0.3);
-            border-top-color: #0095f6; /* Instagram mavisi */
+            border-top-color: #0095f6; 
             border-radius: 50%;
             z-index: 200;
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s;
@@ -228,6 +246,31 @@
             transform: translateX(-50%) scale(1);
             animation: spin 0.8s linear infinite;
         }
+
+        /* CUSTOM ALERT TOAST CSS */
+        #custom-toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(30, 30, 30, 0.95);
+            color: #fff;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            text-align: center;
+            z-index: 99999;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s;
+            max-width: 80%;
+        }
+        #custom-toast.show {
+            opacity: 1;
+            visibility: visible;
+        }
     </style>
 </head>
 <body>
@@ -241,6 +284,7 @@
 
     <div id="offline-banner">İnternet Bağlantısı Yok ⚠️</div>
     <div id="reels-refresh-loader"></div>
+    <div id="custom-toast">Lütfen odağınızı diğer alanlara yönlendirin :)</div>
     
     <div id="main-content">
         <div class="container">
@@ -285,6 +329,7 @@
                         <div class="top-fold"></div>
                         <div class="body"></div>
                         <div class="left-fold"></div>
+                        <div class="click-text">Tıkla</div>
                     </div>
                     <div class="shadow"></div>
                 </div>
@@ -673,6 +718,17 @@
             });
         });
 
+        /* --- TOAST UYARI MESAJI FONKSİYONU --- */
+        function showFocusToast() {
+            const toast = document.getElementById('custom-toast');
+            toast.classList.add('show');
+            
+            // 2.5 saniye sonra gizle
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
         const navButtons = document.querySelectorAll(".nav-btn");
         const searchPopup = document.getElementById("searchPopup");
         const reelsViewEl = document.getElementById("reels-view");
@@ -682,14 +738,18 @@
             btn.addEventListener("click", () => {
                 const action = btn.getAttribute("data-action");
                 
-                // --- GÜNCELLENEN KISIM BAŞLANGIÇ ---
+                // --- ADD ve PROFILE BUTONLARI İÇİN UYARI ---
+                if (action === "add" || action === "profile") {
+                    showFocusToast();
+                    return; // İşlemi durdur, menü değişmesin
+                }
+
                 if (action === "search") {
                     const popup = document.getElementById("searchPopup");
-                    popup.classList.add("active"); // Fade in efektiyle aç
+                    popup.classList.add("active");
                     return;
                 }
-                // --- GÜNCELLENEN KISIM BİTİŞ ---
-
+                
                 navButtons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 document.querySelectorAll(".post-audio").forEach(a => { a.pause(); a.currentTime = 0; });
