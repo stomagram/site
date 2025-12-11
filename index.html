@@ -4,31 +4,125 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Stomagram</title>
+    <link href="https://fonts.googleapis.com/css?family=Acme&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #000; color: #fff; overflow: hidden; }
         
+        /* --- HEADER & LOGO --- */
         #main-content { display: none; }
-        #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 1; transition: opacity 0.5s; }
+        .header { display: flex; align-items: center; padding: 10px 16px; background: #000; border-bottom: 1px solid #262626; position: relative; z-index: 50; height: 54px; }
+        .nav-logo { height: 28px; width: auto; margin-right: 15px; object-fit: contain; } /* Logo Stili */
+        .producer { font-size: 13px; color: #a8a8a8; flex-grow: 1; }
+        .sound-btn { position: absolute; right: 16px; background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; padding: 8px; }
+
+        /* --- PRELOADER & OYUN CSS --- */
+        #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; z-index: 9999; opacity: 1; transition: opacity 0.5s; overflow: hidden; padding-top: 60px; }
         #preloader.hidden { opacity: 0; visibility: hidden; }
-        .loader-content { text-align: center; }
-        .loader-content p { font-size: 16px; font-weight: 600; margin-bottom: 20px; letter-spacing: 2px; }
-        #loading-tip { min-height: 40px; margin: 15px auto; max-width: 80%; color: #a8a8a8; font-size: 13px; font-style: italic; transition: opacity 0.5s; }
+        
+        .loader-content { text-align: center; width: 100%; margin-bottom: 20px; z-index: 10; }
+        .loader-content p { font-size: 16px; font-weight: 600; margin-bottom: 10px; letter-spacing: 2px; color: #fff; }
+        #loading-tip { min-height: 40px; margin: 5px auto; max-width: 80%; color: #a8a8a8; font-size: 13px; font-style: italic; transition: opacity 0.5s; }
         #loading-tip strong { color: #fff; font-weight: 600; display: block; margin-bottom: 3px; }
-        .loader-dots { display: flex; justify-content: center; gap: 10px; }
+        .loader-dots { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
         .loader-dots div { width: 10px; height: 10px; background: #0095f6; border-radius: 50%; animation: bounce 1.2s infinite ease-in-out both; }
         .loader-dots div:nth-child(2) { animation-delay: -0.4s; }
         .loader-dots div:nth-child(3) { animation-delay: -0.8s; }
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+        /* --- TAŞ KAĞIT MAKAS OYUN CSS --- */
+        .game-wrapper {
+            font-family: 'Acme', sans-serif;
+            position: relative;
+            width: 100%;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            transform: scale(0.65); /* Mobilde sığması için küçültüldü */
+            transform-origin: top center;
+            margin-top: 10px;
+        }
+
+        .game-form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .game-title { text-align: center; color: #fff; margin-bottom: 20px; font-size: 2rem; }
+
+        #hands { text-align: center; display: flex; align-items: center; justify-content: center; }
+
+        /* Oyun Animasyonları */
+        @keyframes changeOrder { from { z-index: 9;} to { z-index: 1; } }
+        @keyframes handShake { 0%,100% { transform: rotate(10deg); } 50% { transform: rotate(-10deg); } }
+        @keyframes handShake2 { 0%,100% { transform: rotateY(180deg) rotate(10deg); } 50% { transform: rotateY(180deg) rotate(-10deg); } }
+
+        .hand { margin: 20px; width: 200px; height: 200px; position: relative; transform: rotate(10deg); display: inline-block; animation: handShake 2s infinite; }
+        .game-input:checked ~ div .hand { animation: none !important; }
+
+        .hand > div { position: absolute; box-sizing: border-box; border: 2px solid #000; background: gold; transition: all 0.1s; }
+
+        .fist { height: 110px; left: 40px; top: 50px; width: 90px; border-radius: 20px 0 0 20px; }
+        .finger { width: 70px; height: 30px; border-radius: 20px; left: 80px; transform-origin: 0 50%; }
+        .finger-1 { top: 50px; --dif: 0px; }
+        .finger-2 { top: 78px; left: 84px; --dif: 4px; }
+        .finger-3 { top: 106px; --dif: 0px; }
+        .finger-4 { top: 134px; height: 26px; left: 76px; --dif: -8px; }
+        div.thumb { width: 35px; height: 70px; border-radius: 0 20px 20px 20px; top: 50px; left: 80px; border-left: 0 solid; box-shadow: -17px 6px 0 -15px black; }
+        div.arm { width: 22px; height: 70px; left: 20px; top: 70px; border: 0; border-top: 2px solid black; border-bottom: 2px solid black; }
+
+        #user-hand { transform: rotateY(180deg); animation: handShake2 2s infinite; position: relative; }
+
+        /* Oyun Logic (Checkbox Hack) */
+        .game-input { position: absolute; top: -1000in; left: -1000in; }
+
+        .game-input[id$="scissors"]:checked ~ div #user-hand .finger-1,
+        .game-input[id^="scissors"]:checked ~ div #computer-hand .finger-1 { width: 130px; transform:rotate(-5deg); }
+
+        .game-input[id$="scissors"]:checked ~ div #user-hand .finger-2,
+        .game-input[id^="scissors"]:checked ~ div #computer-hand .finger-2 { width: 130px; transform:rotate(5deg); }
+
+        .game-input[id$="paper"]:checked ~ div #user-hand .finger-1,
+        .game-input[id$="paper"]:checked ~ div #user-hand .finger-2,
+        .game-input[id$="paper"]:checked ~ div #user-hand .finger-3,
+        .game-input[id$="paper"]:checked ~ div #user-hand .finger-4,
+        .game-input[id^="paper"]:checked ~ div #computer-hand .finger-1,
+        .game-input[id^="paper"]:checked ~ div #computer-hand .finger-2,
+        .game-input[id^="paper"]:checked ~ div #computer-hand .finger-3,
+        .game-input[id^="paper"]:checked ~ div #computer-hand .finger-4 {
+            left: 124px; left: calc(124px + var(--dif)); width: 80px; border-left: 0; border-radius: 0 20px 20px 0;
+        }
+
+        /* Sonuç Mesajları (Türkçe) */
+        #rock-rock:checked ~ div h2::before, #paper-paper:checked ~ div h2::before, #scissors-scissors:checked ~ div h2::before { content: "Berabere!"; color: #ffeb3b; }
+        #rock-paper:checked ~ div h2::before, #paper-scissors:checked ~ div h2::before, #scissors-rock:checked ~ div h2::before { content: "Kazandın!"; color: #4caf50; }
+        #rock-scissors:checked ~ div h2::before, #paper-rock:checked ~ div h2::before, #scissors-paper:checked ~ div h2::before { content: "Bilgisayar Kazandı!"; color: #f44336; }
+
+        #message { text-align: center; display: none; margin-top: 15px; }
+        #message h2 { font-size: 2rem; margin-bottom: 10px; }
+        .game-input:checked ~ #message { display: block; }
+
+        /* Kontroller */
+        #icons { width: 30px; height: 200px; display: inline-flex; flex-direction: column; margin-left: 20px; }
+        #icons > div { flex: 1; align-items: center; justify-content: center; width: 60px; height: 60px; overflow: hidden; position: relative; }
         
+        .game-label { animation: changeOrder 0.45s infinite linear; background: #f5f5f5; border: 1px solid #ccc; box-sizing: border-box; cursor: pointer; display: block; height: 60px; width: 60px; line-height: 60px; font-size: 2rem; position: absolute; top: 0; left: 0; user-select: none; text-align: center; border-radius: 8px; color: #000; }
+        .game-label:nth-of-type(1) { animation-delay: -0.00s; }
+        .game-label:nth-of-type(2) { animation-delay: -0.15s; }
+        .game-label:nth-of-type(3) { animation-delay: -0.30s; }
+        
+        .game-label:active { position: static; margin-left: 60px; }
+        .game-label:active::before { content: ""; position: absolute; top: 0; left: 0; width: 60px; z-index: 10; height: 60px; }
+
+        .refresh-btn { background: #0095f6; color: white; border: none; padding: 10px 20px; font-family: 'Acme', sans-serif; font-size: 1.2rem; border-radius: 5px; cursor: pointer; }
+
+        /* --- GENEL STOMAGRAM STİLLERİ DEVAM --- */
         #offline-banner { display: none; position: fixed; top: 0; left: 0; width: 100%; background: #ed4956; color: #fff; text-align: center; padding: 8px; font-size: 13px; font-weight: 600; z-index: 10000; }
         
         .container { height: 100vh; display: flex; flex-direction: column; }
-        .header { display: flex; align-items: center; padding: 10px 16px; background: #000; border-bottom: 1px solid #262626; position: relative; z-index: 50; }
-        .time { font-size: 15px; font-weight: 600; margin-right: 15px; }
-        .producer { font-size: 13px; color: #a8a8a8; flex-grow: 1; }
-        .sound-btn { position: absolute; right: 16px; background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; padding: 8px; }
-        
         .posts-container { flex: 1; overflow-y: scroll; -webkit-overflow-scrolling: touch; padding-bottom: 60px; }
         .posts-container::-webkit-scrollbar { display: none; }
         
@@ -59,54 +153,24 @@
         .nav-btn { background: none; border: none; color: #fff; font-size: 28px; cursor: pointer; padding: 8px 16px; }
         .nav-btn.active { color: #0095f6; }
 
-        /* SEARCH POPUP VE MEKTUP STİLLERİ */
+        /* SEARCH POPUP & MEKTUP */
         .search-popup { 
-            position: fixed; 
-            top: 0; left: 0; right: 0; bottom: 0; 
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(8px);
-            display: flex; 
-            flex-direction: column;
-            justify-content: center; 
-            align-items: center; 
-            z-index: 2000; 
-            opacity: 0; 
-            visibility: hidden; 
-            pointer-events: none;
-            transition: all 0.5s ease;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(8px);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            z-index: 2000; opacity: 0; visibility: hidden; pointer-events: none; transition: all 0.5s ease;
         }
-        
-        .search-popup.active { 
-            opacity: 1; 
-            visibility: visible; 
-            pointer-events: auto; 
-        }
+        .search-popup.active { opacity: 1; visibility: visible; pointer-events: auto; }
 
         .producer-title {
-            color: #fff; 
-            font-size: 24px; 
-            letter-spacing: 4px; 
-            margin-bottom: 70px;
-            font-weight: 300; 
-            text-transform: uppercase;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            transform: translateY(-20px); 
-            transition: transform 0.5s;
+            color: #fff; font-size: 24px; letter-spacing: 4px; margin-bottom: 70px;
+            font-weight: 300; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            transform: translateY(-20px); transition: transform 0.5s;
         }
-        
-        .search-popup.active .producer-title { 
-            transform: translateY(0); 
-        }
+        .search-popup.active .producer-title { transform: translateY(0); }
 
-        .letter-image { 
-            position: relative; 
-            width: 200px; 
-            height: 200px; 
-            cursor: pointer; 
-            z-index: 2005; 
-        }
+        .letter-image { position: relative; width: 200px; height: 200px; cursor: pointer; z-index: 2005; }
         
-        /* Mektup Animasyonu CSS */
         .animated-mail { position: absolute; height: 150px; width: 200px; transition: .4s; top: 50%; left: 50%; transform: translate(-50%, -50%); }
         .animated-mail .body { position: absolute; bottom: 0; width: 0; height: 0; border-style: solid; border-width: 0 0 100px 200px; border-color: transparent transparent #e95f55 transparent; z-index: 2; }
         .animated-mail .top-fold { position: absolute; top: 50px; width: 0; height: 0; border-style: solid; border-width: 50px 100px 0 100px; transform-origin: 50% 0%; transition: transform .4s .4s, z-index .2s .4s; border-color: #cf4a43 transparent transparent transparent; z-index: 2; }
@@ -118,32 +182,14 @@
         .animated-mail .letter .letter-stamp { margin-top: 30px; margin-left: 120px; border-radius: 100%; height: 30px; width: 30px; background: #cb5a5e; opacity: 0.3; position: absolute; right: 5px; bottom: 5px; }
         .shadow { position: absolute; top: 200px; left: 50%; width: 400px; height: 30px; transition: .4s; transform: translateX(-50%); border-radius: 100%; background: radial-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.0), rgba(0,0,0,0.0)); z-index: 2004; }
 
-        /* Zarfın Üzerindeki Yazı CSS */
-        .click-text {
-            position: absolute;
-            bottom: 35px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255,255,255,0.9);
-            font-size: 14px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            z-index: 10;
-            pointer-events: none;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
-            transition: opacity 0.3s;
-        }
-
+        .click-text { position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.9); font-size: 14px; font-weight: bold; letter-spacing: 1px; z-index: 10; pointer-events: none; text-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: opacity 0.3s; }
         .letter-image.open .click-text { opacity: 0; }
-
-        /* Mektup Açılma Halleri */
         .letter-image.open .animated-mail { transform: translate(-50%, -50px); }
         .letter-image.open .animated-mail .top-fold { transform: rotateX(180deg); z-index: 0; }
         .letter-image.open .animated-mail .letter { height: 180px; z-index: 2; }
         .letter-image.open .shadow { width: 250px; }
         
         /* ------------------------------------ */
-
         .double-heart { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(0.2); font-size: 120px; pointer-events: none; opacity: 0; transition: transform 450ms cubic-bezier(.2,.8,.2,1), opacity 450ms; text-shadow: 0 6px 18px rgba(0,0,0,0.6); z-index: 800; }
         .double-heart.show { transform: translate(-50%, -50%) scale(1); opacity: 1; animation: heartPop 700ms forwards; color: #ff2d55; }
         @keyframes heartPop { 0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; } 30% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; } 60% { transform: translate(-50%, -50%) scale(0.95); } 100% { transform: translate(-50%, -50%) scale(1); opacity: 0; } }
@@ -158,6 +204,7 @@
         @keyframes saveBounce { 0% { transform: scale(1); } 50% { transform: scale(1.35); } 100% { transform: scale(1); } }
         .action-btn.saved { animation: saveBounce 0.4s; filter: brightness(0) saturate(100%) invert(100%); text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
         
+        /* REELS CSS */
         #reels-view { display: none; width: 100%; height: 100vh; height: 100dvh; background: #000; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; position: absolute; top: 0; left: 0; z-index: 60; }
         #reels-view::-webkit-scrollbar { display: none; }
         .reel-container { width: 100%; height: 100vh; height: 100dvh; position: relative; scroll-snap-align: start; scroll-snap-stop: always; display: flex; align-items: center; justify-content: center; background: #000; overflow: hidden; padding-bottom: 55px; box-sizing: border-box; }
@@ -174,103 +221,17 @@
         .reel-description { font-size: 14px; line-height: 1.3; margin-bottom: 10px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); max-height: 60px; overflow: hidden; }
         .music-ticker { display: flex; align-items: center; gap: 8px; font-size: 13px; background: rgba(0,0,0,0.4); padding: 4px 12px; border-radius: 20px; width: fit-content; }
 
-        .reel-loader {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 32px;
-            height: 32px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s linear infinite;
-            z-index: 55;
-            display: none; 
-            pointer-events: none;
-        }
+        .reel-loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 32px; height: 32px; border: 3px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s linear infinite; z-index: 55; display: none; pointer-events: none; }
+        .volume-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 40px; background: rgba(0,0,0,0.6); color: #fff; padding: 15px; border-radius: 50%; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 65; display: flex; align-items: center; justify-content: center; width: 70px; height: 70px; }
+        .volume-icon.show { opacity: 1; }
+        @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
 
-        .volume-icon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 40px;
-            background: rgba(0,0,0,0.6);
-            color: #fff;
-            padding: 15px;
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s;
-            z-index: 65;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 70px;
-            height: 70px;
-        }
-        
-        .volume-icon.show {
-            opacity: 1;
-        }
+        #reels-refresh-loader { position: fixed; top: 50px; left: 50%; transform: translateX(-50%) scale(0); width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.3); border-top-color: #0095f6; border-radius: 50%; z-index: 200; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s; opacity: 0; pointer-events: none; }
+        #reels-refresh-loader.visible { opacity: 1; transform: translateX(-50%) scale(1.2); }
+        #reels-refresh-loader.spinning { opacity: 1; transform: translateX(-50%) scale(1); animation: spin 0.8s linear infinite; }
 
-        @keyframes spin {
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        /* REELS REFRESH LOADER CSS */
-        #reels-refresh-loader {
-            position: fixed;
-            top: 50px;
-            left: 50%;
-            transform: translateX(-50%) scale(0);
-            width: 30px;
-            height: 30px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-top-color: #0095f6; 
-            border-radius: 50%;
-            z-index: 200;
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        #reels-refresh-loader.visible {
-            opacity: 1;
-            transform: translateX(-50%) scale(1.2);
-        }
-
-        #reels-refresh-loader.spinning {
-            opacity: 1;
-            transform: translateX(-50%) scale(1);
-            animation: spin 0.8s linear infinite;
-        }
-
-        /* CUSTOM ALERT TOAST CSS */
-        #custom-toast {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(30, 30, 30, 0.95);
-            color: #fff;
-            padding: 16px 24px;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            text-align: center;
-            z-index: 99999;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s;
-            max-width: 80%;
-        }
-        #custom-toast.show {
-            opacity: 1;
-            visibility: visible;
-        }
+        #custom-toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(30, 30, 30, 0.95); color: #fff; padding: 16px 24px; border-radius: 12px; font-size: 15px; font-weight: 600; text-align: center; z-index: 99999; box-shadow: 0 4px 15px rgba(0,0,0,0.5); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s; max-width: 80%; }
+        #custom-toast.show { opacity: 1; visibility: visible; }
     </style>
 </head>
 <body>
@@ -279,6 +240,69 @@
             <p>YÜKLENİYOR</p>
             <div id="loading-tip"></div>
             <div class="loader-dots"><div></div><div></div><div></div></div>
+        </div>
+
+        <div class="game-wrapper">
+            <form class="game-form">
+                <input type="radio" id="rock-rock" name="rock-paper-scissors" class="game-input">
+                <input type="radio" id="rock-paper" name="rock-paper-scissors" class="game-input">
+                <input type="radio" id="rock-scissors" name="rock-paper-scissors" class="game-input">
+                <input type="radio" id="paper-rock" name="rock-paper-scissors" class="game-input">
+                <input type="radio" id="paper-paper" name="rock-paper-scissors" class="game-input">
+                <input type="radio" id="paper-scissors" name="rock-paper-scissors" class="game-input">
+                <input type="radio" id="scissors-rock" name="rock-paper-scissors" class="game-input">
+                <input type="radio" id="scissors-paper" name="rock-paper-scissors" class="game-input">
+                <input type="radio" id="scissors-scissors" name="rock-paper-scissors" class="game-input">
+              
+                <div>
+                  <h1 class="game-title">Taş Kağıt Makas</h1>
+                  <div id="hands">
+                    <div class="hand" id="computer-hand">
+                      <div class="fist"></div>
+                      <div class="finger finger-1"></div>
+                      <div class="finger finger-2"></div>
+                      <div class="finger finger-3"></div>
+                      <div class="finger finger-4"></div>
+                      <div class="thumb"></div>
+                      <div class="arm"></div>
+                    </div>
+              
+                    <div class="hand" id="user-hand">
+                      <div class="fist"></div>
+                      <div class="finger finger-1"></div>
+                      <div class="finger finger-2"></div>
+                      <div class="finger finger-3"></div>
+                      <div class="finger finger-4"></div>
+                      <div class="thumb"></div>
+                      <div class="arm"></div>
+                    </div>
+                    
+                    <div id="icons">
+                      <div>
+                        <label for="rock-rock" class="game-label">✊</label>
+                        <label for="paper-rock" class="game-label">✊</label>
+                        <label for="scissors-rock" class="game-label">✊</label>
+                      </div>
+                      <div>
+                        <label for="rock-paper" class="game-label">🖐️</label>
+                        <label for="paper-paper" class="game-label">🖐️</label>
+                        <label for="scissors-paper" class="game-label">🖐️</label>
+                      </div>
+                      <div>
+                        <label for="rock-scissors" class="game-label">✌</label>
+                        <label for="paper-scissors" class="game-label">✌</label>
+                        <label for="scissors-scissors" class="game-label">✌</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+                <div id="message">
+                  <h2></h2>
+                  <input type="reset" value="Tekrar Oyna" class="refresh-btn" />
+                </div>
+              
+            </form>
         </div>
     </div>
 
@@ -296,7 +320,7 @@
             </div>
 
             <div class="header" id="mainHeader">
-                <div class="time" id="time">16:39</div>
+                <img src="logo.png" alt="Logo" class="nav-logo">
                 <div class="producer">Yapımcı: Sude Naz Türkeli</div>
                 <button id="soundToggle" class="sound-btn">🔇</button>
             </div>
@@ -577,7 +601,6 @@
                     if (video.readyState >= 3) checkVideoLoaded();
                 }
             }
-            // 5 Saniye kuralı buradan kaldırıldı. Artık sadece videolar yüklendiğinde açılacak.
         });
 
         window.addEventListener('online', updateOnlineStatus);
@@ -586,17 +609,6 @@
             document.getElementById('offline-banner').style.display = !navigator.onLine ? 'block' : 'none';
         }
         updateOnlineStatus();
-
-        function updateTime() {
-            const el = document.getElementById("time");
-            const now = new Date();
-            let h = now.getHours(), m = now.getMinutes();
-            if (h < 10) h = "0" + h;
-            if (m < 10) m = "0" + m;
-            el.textContent = h + ":" + m;
-        }
-        updateTime();
-        setInterval(updateTime, 1000);
 
         function toggleFollow(btn) {
             btn.classList.toggle('following');
