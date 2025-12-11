@@ -2,23 +2,30 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Stomagram</title>
     <link href="https://fonts.googleapis.com/css?family=Acme&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #000; color: #fff; overflow: hidden; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: #000; 
+            color: #fff; 
+            overflow: hidden; 
+            height: 100vh;
+            height: 100dvh; /* iOS Safari adres çubuğu sorunu için */
+        }
         
         /* --- HEADER & LOGO --- */
-        #main-content { display: none; }
-        .header { display: flex; align-items: center; padding: 10px 16px; background: #000; border-bottom: 1px solid #262626; position: relative; z-index: 50; height: 54px; }
-        .nav-logo { height: 28px; width: auto; margin-right: 15px; object-fit: contain; } /* Sol üst köşe logo */
+        #main-content { display: none; height: 100%; flex-direction: column; }
+        .header { display: flex; align-items: center; padding: 10px 16px; background: #000; border-bottom: 1px solid #262626; position: relative; z-index: 50; height: 54px; flex-shrink: 0; }
+        .nav-logo { height: 28px; width: auto; margin-right: 15px; object-fit: contain; }
         .producer { font-size: 13px; color: #a8a8a8; flex-grow: 1; }
-        .sound-btn { position: absolute; right: 16px; background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; padding: 8px; }
+        .sound-btn { position: absolute; right: 16px; background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; padding: 8px; touch-action: manipulation; }
 
         /* --- PRELOADER & OYUN CSS --- */
         #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; z-index: 9999; opacity: 1; transition: opacity 0.5s; overflow: hidden; padding-top: 60px; }
-        #preloader.hidden { opacity: 0; visibility: hidden; }
+        #preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         
         .loader-content { text-align: center; width: 100%; margin-bottom: 10px; z-index: 10; }
         .loader-content p { font-size: 16px; font-weight: 600; margin-bottom: 10px; letter-spacing: 2px; color: #fff; }
@@ -33,55 +40,57 @@
         /* --- YÜKLEME EKRANI ALT LOGO KAPSAYICISI --- */
         .bottom-logo-container {
             position: absolute;
-            bottom: 30px;      /* En alttan boşluk */
+            bottom: 30px;
             left: 0;
-            width: 100%;       /* Soldan sağa tam genişlik */
+            width: 100%;
             display: flex;
-            justify-content: center; /* Logoyu ortala */
+            justify-content: center;
             align-items: center;
-            padding: 0 20px;   /* Kenarlardan taşmaması için boşluk */
+            padding: 0 20px;
             z-index: 20;
+            pointer-events: none; /* Oyuna tıklamayı engellememesi için */
         }
 
         .bottom-logo-container img {
             width: auto;
-            max-width: 60%;    /* Logunun genişliği ekranın %60'ını geçmesin */
-            max-height: 80px;  /* Yüksekliği sınırla */
+            max-width: 60%;
+            max-height: 80px;
             object-fit: contain;
             display: block;
         }
 
-        /* --- TAŞ KAĞIT MAKAS OYUN CSS --- */
+        /* --- TAŞ KAĞIT MAKAS OYUN CSS (DÜZELTİLMİŞ) --- */
         .game-wrapper {
             font-family: 'Acme', sans-serif;
             position: relative;
             width: 100%;
-            height: 400px;
+            height: 350px; /* Sabit yükseklik */
             display: flex;
             justify-content: center;
-            transform: scale(0.65); /* Mobilde sığması için küçültüldü */
+            transform: scale(0.7); /* Mobilde sığması için */
             transform-origin: top center;
-            margin-top: 10px;
+            margin-top: 20px;
+            z-index: 50; /* Logoların üstünde olması için */
         }
 
         .game-form {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             flex-direction: column;
             width: 100%;
         }
 
-        .game-title { text-align: center; color: #fff; margin-bottom: 20px; font-size: 2rem; }
+        .game-title { text-align: center; color: #fff; margin-bottom: 10px; font-size: 2rem; }
 
-        #hands { text-align: center; display: flex; align-items: center; justify-content: center; }
+        #hands { text-align: center; display: flex; align-items: center; justify-content: center; position: relative; }
 
         /* Oyun Animasyonları */
         @keyframes changeOrder { from { z-index: 9;} to { z-index: 1; } }
         @keyframes handShake { 0%,100% { transform: rotate(10deg); } 50% { transform: rotate(-10deg); } }
         @keyframes handShake2 { 0%,100% { transform: rotateY(180deg) rotate(10deg); } 50% { transform: rotateY(180deg) rotate(-10deg); } }
 
-        .hand { margin: 20px; width: 200px; height: 200px; position: relative; transform: rotate(10deg); display: inline-block; animation: handShake 2s infinite; }
+        .hand { margin: 10px; width: 180px; height: 180px; position: relative; transform: rotate(10deg); display: inline-block; animation: handShake 2s infinite; pointer-events: none; /* Ele tıklayınca zoom yapmasın */ }
         .game-input:checked ~ div .hand { animation: none !important; }
 
         .hand > div { position: absolute; box-sizing: border-box; border: 2px solid #000; background: gold; transition: all 0.1s; }
@@ -97,8 +106,8 @@
 
         #user-hand { transform: rotateY(180deg); animation: handShake2 2s infinite; position: relative; }
 
-        /* Oyun Logic (Checkbox Hack) */
-        .game-input { position: absolute; top: -1000in; left: -1000in; }
+        /* Oyun Logic */
+        .game-input { position: absolute; opacity: 0; pointer-events: none; }
 
         .game-input[id$="scissors"]:checked ~ div #user-hand .finger-1,
         .game-input[id^="scissors"]:checked ~ div #computer-hand .finger-1 { width: 130px; transform:rotate(-5deg); }
@@ -117,34 +126,82 @@
             left: 124px; left: calc(124px + var(--dif)); width: 80px; border-left: 0; border-radius: 0 20px 20px 0;
         }
 
-        /* Sonuç Mesajları (Türkçe) */
         #rock-rock:checked ~ div h2::before, #paper-paper:checked ~ div h2::before, #scissors-scissors:checked ~ div h2::before { content: "Berabere!"; color: #ffeb3b; }
         #rock-paper:checked ~ div h2::before, #paper-scissors:checked ~ div h2::before, #scissors-rock:checked ~ div h2::before { content: "Kazandın!"; color: #4caf50; }
         #rock-scissors:checked ~ div h2::before, #paper-rock:checked ~ div h2::before, #scissors-paper:checked ~ div h2::before { content: "Bilgisayar Kazandı!"; color: #f44336; }
 
-        #message { text-align: center; display: none; margin-top: 15px; }
-        #message h2 { font-size: 2rem; margin-bottom: 10px; }
+        #message { text-align: center; display: none; margin-top: 10px; width: 100%; position: absolute; bottom: -80px; left: 0; z-index: 100; }
+        #message h2 { font-size: 2rem; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .game-input:checked ~ #message { display: block; }
 
-        /* Kontroller */
-        #icons { width: 30px; height: 200px; display: inline-flex; flex-direction: column; margin-left: 20px; }
-        #icons > div { flex: 1; align-items: center; justify-content: center; width: 60px; height: 60px; overflow: hidden; position: relative; }
+        /* iPhone Uyumlu Kontroller */
+        #icons { 
+            width: 70px; 
+            height: 200px; 
+            display: inline-flex; 
+            flex-direction: column; 
+            margin-left: 10px; 
+            position: relative;
+            z-index: 200; /* Ellerin üzerinde olması için */
+        }
+        #icons > div { 
+            flex: 1; 
+            align-items: center; 
+            justify-content: center; 
+            width: 70px; 
+            height: 60px; 
+            overflow: visible; 
+            position: relative; 
+            margin-bottom: 10px;
+        }
         
-        .game-label { animation: changeOrder 0.45s infinite linear; background: #f5f5f5; border: 1px solid #ccc; box-sizing: border-box; cursor: pointer; display: block; height: 60px; width: 60px; line-height: 60px; font-size: 2rem; position: absolute; top: 0; left: 0; user-select: none; text-align: center; border-radius: 8px; color: #000; }
+        /* iPhone Tıklama Alanı Düzeltmesi */
+        .game-label { 
+            animation: changeOrder 0.45s infinite linear; 
+            background: #f5f5f5; 
+            border: 2px solid #ccc; 
+            box-sizing: border-box; 
+            cursor: pointer; 
+            display: block; 
+            height: 65px; 
+            width: 65px; 
+            line-height: 60px; 
+            font-size: 2rem; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            user-select: none; 
+            text-align: center; 
+            border-radius: 12px; 
+            color: #000;
+            /* iOS Tıklama İyileştirmeleri */
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
         .game-label:nth-of-type(1) { animation-delay: -0.00s; }
         .game-label:nth-of-type(2) { animation-delay: -0.15s; }
         .game-label:nth-of-type(3) { animation-delay: -0.30s; }
         
-        .game-label:active { position: static; margin-left: 60px; }
-        .game-label:active::before { content: ""; position: absolute; top: 0; left: 0; width: 60px; z-index: 10; height: 60px; }
+        .game-label:active { position: static; margin-left: 0; transform: scale(0.95); }
 
-        .refresh-btn { background: #0095f6; color: white; border: none; padding: 10px 20px; font-family: 'Acme', sans-serif; font-size: 1.2rem; border-radius: 5px; cursor: pointer; }
+        .refresh-btn { 
+            background: #0095f6; 
+            color: white; 
+            border: none; 
+            padding: 12px 30px; 
+            font-family: 'Acme', sans-serif; 
+            font-size: 1.4rem; 
+            border-radius: 8px; 
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
 
-        /* --- GENEL STOMAGRAM STİLLERİ DEVAM --- */
-        #offline-banner { display: none; position: fixed; top: 0; left: 0; width: 100%; background: #ed4956; color: #fff; text-align: center; padding: 8px; font-size: 13px; font-weight: 600; z-index: 10000; }
+        /* --- GENEL STOMAGRAM STİLLERİ --- */
+        #offline-banner { display: none; position: fixed; top: 0; left: 0; width: 100%; background: #ed4956; color: #fff; text-align: center; padding: 8px; font-size: 13px; font-weight: 600; z-index: 10000; padding-top: max(8px, env(safe-area-inset-top)); }
         
-        .container { height: 100vh; display: flex; flex-direction: column; }
-        .posts-container { flex: 1; overflow-y: scroll; -webkit-overflow-scrolling: touch; padding-bottom: 60px; }
+        .container { height: 100%; display: flex; flex-direction: column; }
+        .posts-container { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 60px; }
         .posts-container::-webkit-scrollbar { display: none; }
         
         .post { display: flex; flex-direction: column; background: #000; }
@@ -161,7 +218,7 @@
         .post-image { width: 100%; height: auto; object-fit: contain; }
         .post-actions { display: flex; align-items: center; padding: 2px 16px; gap: 16px; }
         .action-group { display: flex; gap: 16px; flex: 1; }
-        .action-btn { background: none; border: none; color: #fff; font-size: 26px; cursor: pointer; padding: 8px; }
+        .action-btn { background: none; border: none; color: #fff; font-size: 26px; cursor: pointer; padding: 8px; touch-action: manipulation; }
         .action-btn.liked { color: #ed4956; }
         .post-likes { padding: 0 16px 4px; font-size: 14px; font-weight: 600; }
         .post-caption { padding: 0 16px 8px; font-size: 14px; }
@@ -170,8 +227,8 @@
         .post-time { padding: 0 16px 8px; font-size: 12px; color: #a8a8a8; border-bottom: 1px solid #262626; }
         .read-more-btn { color: #a8a8a8; font-weight: 500; margin-left: 5px; cursor: pointer; user-select: none; display: inline; }
         
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; padding-bottom: env(safe-area-inset-bottom); display: flex; align-items: center; justify-content: space-around; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); z-index: 100; border-top: 1px solid rgba(255, 255, 255, 0.1); }
-        .nav-btn { background: none; border: none; color: #fff; font-size: 28px; cursor: pointer; padding: 8px 16px; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; padding-bottom: env(safe-area-inset-bottom); display: flex; align-items: center; justify-content: space-around; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(12px); z-index: 100; border-top: 1px solid rgba(255, 255, 255, 0.1); height: calc(50px + env(safe-area-inset-bottom)); flex-shrink: 0; }
+        .nav-btn { background: none; border: none; color: #fff; font-size: 28px; cursor: pointer; padding: 8px 16px; touch-action: manipulation; }
         .nav-btn.active { color: #0095f6; }
 
         /* SEARCH POPUP & MEKTUP */
@@ -226,13 +283,13 @@
         .action-btn.saved { animation: saveBounce 0.4s; filter: brightness(0) saturate(100%) invert(100%); text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
         
         /* REELS CSS */
-        #reels-view { display: none; width: 100%; height: 100vh; height: 100dvh; background: #000; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; position: absolute; top: 0; left: 0; z-index: 60; }
+        #reels-view { display: none; width: 100%; height: 100%; background: #000; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; position: absolute; top: 0; left: 0; z-index: 60; }
         #reels-view::-webkit-scrollbar { display: none; }
-        .reel-container { width: 100%; height: 100vh; height: 100dvh; position: relative; scroll-snap-align: start; scroll-snap-stop: always; display: flex; align-items: center; justify-content: center; background: #000; overflow: hidden; padding-bottom: 55px; box-sizing: border-box; }
-        .reel-bg { width: 100%; height: 100%; object-fit: contain; opacity: 1; background: #000; }
+        .reel-container { width: 100%; height: 100%; position: relative; scroll-snap-align: start; scroll-snap-stop: always; display: flex; align-items: center; justify-content: center; background: #000; overflow: hidden; padding-bottom: 55px; box-sizing: border-box; }
+        .reel-bg { width: 100%; height: 100%; object-fit: cover; opacity: 1; background: #000; }
         .reel-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 40%); pointer-events: none; }
         .reel-actions { position: absolute; bottom: calc(55px + env(safe-area-inset-bottom)); right: 10px; display: flex; flex-direction: column; align-items: center; gap: 20px; pointer-events: auto; z-index: 70; }
-        .reel-btn { background: none; border: none; color: #fff; display: flex; flex-direction: column; align-items: center; cursor: pointer; font-size: 28px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .reel-btn { background: none; border: none; color: #fff; display: flex; flex-direction: column; align-items: center; cursor: pointer; font-size: 28px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); touch-action: manipulation; }
         .reel-btn span { font-size: 12px; margin-top: 4px; font-weight: 500; }
         .reel-info { position: absolute; bottom: calc(55px + env(safe-area-inset-bottom)); left: 15px; width: 75%; pointer-events: auto; text-align: left; z-index: 70; }
         .reel-user { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
@@ -251,7 +308,7 @@
         #reels-refresh-loader.visible { opacity: 1; transform: translateX(-50%) scale(1.2); }
         #reels-refresh-loader.spinning { opacity: 1; transform: translateX(-50%) scale(1); animation: spin 0.8s linear infinite; }
 
-        #custom-toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(30, 30, 30, 0.95); color: #fff; padding: 16px 24px; border-radius: 12px; font-size: 15px; font-weight: 600; text-align: center; z-index: 99999; box-shadow: 0 4px 15px rgba(0,0,0,0.5); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s; max-width: 80%; }
+        #custom-toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(30, 30, 30, 0.95); color: #fff; padding: 16px 24px; border-radius: 12px; font-size: 15px; font-weight: 600; text-align: center; z-index: 99999; box-shadow: 0 4px 15px rgba(0,0,0,0.5); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s; max-width: 80%; pointer-events: none; }
         #custom-toast.show { opacity: 1; visibility: visible; }
     </style>
 </head>
@@ -433,7 +490,7 @@
                 </div>
                 <div class="post-content">
                     <img src="${p.img}" class="post-image">
-                    <audio class="post-audio" loop muted><source src="${p.audio}" type="audio/mp3"></audio>
+                    <audio class="post-audio" loop muted playsinline><source src="${p.audio}" type="audio/mp3"></audio>
                 </div>
                 <div class="post-actions">
                     <div class="action-group">
@@ -455,10 +512,8 @@
             container.appendChild(el);
         });
 
-        // REELS OLUŞTURMA FONKSİYONU VE PULL-TO-REFRESH MANTIĞI
         let currentReelList = [];
 
-        // Observer tanımları (Daha önce global tanımlanmalı ki fonksiyon içinde kullanılabilsin)
         const reelsObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const video = entry.target.querySelector('.reel-video');
@@ -467,7 +522,15 @@
                     video.preload = "auto";
                     video.currentTime = 0;
                     video.muted = false; 
-                    video.play().catch(e => console.log("Reel autoplay engellendi"));
+                    // iOS için Play Promise Hatasını Yakala
+                    const playPromise = video.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            console.log("iOS Autoplay Engellendi: Kullanıcı etkileşimi bekleniyor.");
+                            video.muted = true; // Sesi kapatıp tekrar dene
+                            video.play().catch(e => {});
+                        });
+                    }
                     const nextReel = entry.target.nextElementSibling;
                     if (nextReel) {
                         const nextVideo = nextReel.querySelector('.reel-video');
@@ -481,16 +544,13 @@
             });
         }, { threshold: 0.6 });
 
-        // Reels verilerini ekrana basan fonksiyon
         function renderReelsData() {
-            reelsView.innerHTML = ''; // Mevcut içeriği temizle
-            
-            // Listeyi karıştır
+            reelsView.innerHTML = ''; 
             reels.sort(() => Math.random() - 0.5).forEach(r => {
                 const el = document.createElement('div');
                 el.className = 'reel-container';
                 el.innerHTML = `
-                    <video class="reel-video reel-bg" src="${r.video}" loop playsinline preload="none"></video>
+                    <video class="reel-video reel-bg" src="${r.video}" loop playsinline webkit-playsinline preload="none"></video>
                     <div class="reel-overlay"></div>
                     <div class="reel-loader"></div>
                     <div class="volume-icon">🔇</div>
@@ -511,50 +571,30 @@
                     </div>
                 `;
                 
-                // Eventleri ve Gözlemciyi yeniden bağla
                 setupReelEvents(el);
                 attachDoubleTap(el);
                 reelsObserver.observe(el);
                 reelsView.appendChild(el);
             });
-
-            // Sonsuz döngü listesini güncelle
             currentReelList = Array.from(document.querySelectorAll('.reel-container'));
         }
 
-        // Başlangıçta Reels'leri yükle
         renderReelsData();
 
-        // Reels Eventlerini Ayarlayan Fonksiyon
         function setupReelEvents(container) {
             const video = container.querySelector('.reel-video');
             const loader = container.querySelector('.reel-loader');
             const volumeIcon = container.querySelector('.volume-icon');
 
-            // 1. Loading Durumu (Buffering)
-            video.addEventListener('waiting', () => {
-                loader.style.display = 'block';
-            });
-            video.addEventListener('playing', () => {
-                loader.style.display = 'none';
-            });
+            video.addEventListener('waiting', () => { loader.style.display = 'block'; });
+            video.addEventListener('playing', () => { loader.style.display = 'none'; });
 
-            // 2. Tıklayınca Ses Aç/Kapat (Toggle Mute)
             container.addEventListener('click', (e) => {
-                // Eğer butonlara tıklanırsa çalışmasın
                 if (e.target.closest('.reel-btn') || e.target.closest('.reel-follow')) return;
-
-                // Ses durumunu değiştir
                 video.muted = !video.muted;
-                
-                // İkonu göster
                 volumeIcon.textContent = video.muted ? "🔇" : "🔊";
                 volumeIcon.classList.add('show');
-                
-                // 1 saniye sonra ikonu gizle
-                setTimeout(() => {
-                    volumeIcon.classList.remove('show');
-                }, 1000);
+                setTimeout(() => { volumeIcon.classList.remove('show'); }, 1000);
             });
         }
 
@@ -579,14 +619,12 @@
             const el = document.getElementById('loading-tip');
             el.style.opacity = 0;
             setTimeout(() => {
-                // RASTGELE BİLGİ SEÇİMİ (0 ile tips.length arasında rastgele sayı)
                 const randomIndex = Math.floor(Math.random() * tips.length);
                 el.innerHTML = `<strong>Bunu Biliyor Muydunuz:</strong> ${tips[randomIndex]}`;
                 el.style.opacity = 1;
             }, 500);
         }
 
-        // Başlangıçta rastgele bir bilgi göster
         const initialEl = document.getElementById('loading-tip');
         const startRandomIndex = Math.floor(Math.random() * tips.length);
         initialEl.innerHTML = `<strong>Bunu Biliyor Muydunuz:</strong> ${tips[startRandomIndex]}`;
@@ -594,6 +632,7 @@
 
         tipInterval = setInterval(displayTip, 2500);
 
+        // --- İPHONE İÇİN GÜÇLENDİRİLMİŞ YÜKLEME MANTIĞI ---
         window.addEventListener('load', () => {
             const preloader = document.getElementById('preloader');
             const mainContent = document.getElementById('main-content');
@@ -609,6 +648,9 @@
                 preloader.classList.add('hidden');
                 setTimeout(() => preloader.style.display = 'none', 500);
             }
+
+            // iPhone için ZORUNLU Fallback (3.5 saniye sonra videolar yüklenmese bile aç)
+            setTimeout(startApp, 10000);
 
             function checkVideoLoaded() {
                 loadedCount++;
@@ -689,10 +731,21 @@
 
         function attachDoubleTap(el) {
             let lastTap = 0;
-            el.addEventListener('dblclick', (e) => {
-                showHeart(el);
-                const post = el.closest('.post');
-                const reel = el.closest('.reel-container');
+            // Çift tıklama hem touch hem click ile desteklenmeli
+            el.addEventListener('click', (e) => {
+                const currentTime = Date.now();
+                const tapLength = currentTime - lastTap;
+                if (tapLength < 300 && tapLength > 0) {
+                   triggerLike(el);
+                   e.preventDefault();
+                }
+                lastTap = currentTime;
+            });
+            
+            function triggerLike(element) {
+                showHeart(element);
+                const post = element.closest('.post');
+                const reel = element.closest('.reel-container');
                 if (post) {
                     const likeBtn = post.querySelector('.action-group .action-btn');
                     if (likeBtn && !likeBtn.classList.contains('liked')) likePost(likeBtn);
@@ -701,33 +754,12 @@
                     const likeBtn = reel.querySelector('.reel-actions .reel-btn:first-child');
                     if (likeBtn && !likeBtn.classList.contains('liked')) likeReel(likeBtn);
                 }
-            });
-            el.addEventListener('touchend', function(e) {
-                const currentTime = Date.now();
-                const tapLength = currentTime - lastTap;
-                if (tapLength < 300 && tapLength > 0) {
-                    e.preventDefault();
-                    showHeart(el);
-                    const post = el.closest('.post');
-                    const reel = el.closest('.reel-container');
-                    if (post) {
-                        const likeBtn = post.querySelector('.action-group .action-btn');
-                        if (likeBtn && !likeBtn.classList.contains('liked')) likePost(likeBtn);
-                    }
-                    if (reel) {
-                        const likeBtn = reel.querySelector('.reel-actions .reel-btn:first-child');
-                        if (likeBtn && !likeBtn.classList.contains('liked')) likeReel(likeBtn);
-                    }
-                }
-                lastTap = currentTime;
-            });
+            }
         }
         document.querySelectorAll('.post-content').forEach(el => attachDoubleTap(el));
         
-        // Reels için attachDoubleTap fonksiyonu zaten renderReelsData içinde çağrılıyor.
-
         const soundToggle = document.getElementById("soundToggle");
-        const postsContainer = document.getElementById("postsContainer");
+        const postsContainerEl = document.getElementById("postsContainer");
 
         function managePostAudio(post, shouldPlay) {
             if (document.getElementById('reels-view').style.display === 'block') return;
@@ -736,7 +768,7 @@
             if (shouldPlay) {
                 audio.muted = !soundEnabled;
                 audio.volume = 0.6;
-                audio.play().catch(e => console.log("Oynatma engellendi"));
+                audio.play().catch(e => {});
             } else {
                 audio.pause();
                 audio.currentTime = 0;
@@ -757,32 +789,23 @@
             });
         });
 
-        /* --- TOAST UYARI MESAJI FONKSİYONU --- */
         function showFocusToast() {
             const toast = document.getElementById('custom-toast');
             toast.classList.add('show');
-            
-            // 2.5 saniye sonra gizle
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2500);
+            setTimeout(() => { toast.classList.remove('show'); }, 2500);
         }
 
         const navButtons = document.querySelectorAll(".nav-btn");
-        const searchPopup = document.getElementById("searchPopup");
         const reelsViewEl = document.getElementById("reels-view");
         const mainHeader = document.getElementById("mainHeader");
 
         navButtons.forEach(btn => {
             btn.addEventListener("click", () => {
                 const action = btn.getAttribute("data-action");
-                
-                // --- ADD ve PROFILE BUTONLARI İÇİN UYARI ---
                 if (action === "add" || action === "profile") {
                     showFocusToast();
-                    return; // İşlemi durdur, menü değişmesin
+                    return;
                 }
-
                 if (action === "search") {
                     const popup = document.getElementById("searchPopup");
                     popup.classList.add("active");
@@ -795,12 +818,12 @@
                 document.querySelectorAll(".reel-video").forEach(v => { v.pause(); v.currentTime = 0; });
                 
                 if (action === "home") {
-                    postsContainer.style.display = "block";
+                    postsContainerEl.style.display = "block";
                     reelsViewEl.style.display = "none";
                     mainHeader.style.display = "flex";
-                    postsContainer.scrollTo({ top: 0, behavior: 'smooth' });
+                    postsContainerEl.scrollTo({ top: 0, behavior: 'smooth' });
                 } else if (action === "reels") {
-                    postsContainer.style.display = "block";
+                    postsContainerEl.style.display = "block";
                     reelsViewEl.style.display = "block";
                     mainHeader.style.display = "none";
                     reelsViewEl.scrollTo({ top: 0, behavior: 'smooth' });
@@ -811,7 +834,6 @@
             });
         });
 
-        /* Mektup Animasyon ve Kapatma Kodları */
         const popup = document.getElementById("searchPopup");
         const letterImage = document.querySelector(".letter-image");
 
@@ -821,7 +843,6 @@
         }
 
         popup.addEventListener("click", function(e) {
-            // Siyah boşluğa veya "Yapımcılar" yazısına tıklanırsa kapat
             if (e.target === popup || e.target.classList.contains('producer-title')) {
                 popup.classList.remove("active");
                 setTimeout(() => { letterImage.classList.remove("open"); }, 500);
@@ -876,11 +897,9 @@
         window.addEventListener('load', initializeCaptionTruncation);
 
         setTimeout(() => { currentPostList = Array.from(document.querySelectorAll('.post')); }, 300);
-        
-        // currentReelList, renderReelsData içinde atanıyor.
 
-        postsContainer.addEventListener('scroll', () => {
-            if (postsContainer.scrollTop + postsContainer.clientHeight >= postsContainer.scrollHeight - 800) {
+        postsContainerEl.addEventListener('scroll', () => {
+            if (postsContainerEl.scrollTop + postsContainerEl.clientHeight >= postsContainerEl.scrollHeight - 800) {
                 currentPostList.forEach(originalPost => {
                     const clone = originalPost.cloneNode(true);
                     feedObserver.observe(clone);
@@ -929,18 +948,18 @@
         });
 
         let startY = 0, isPulling = false;
-        postsContainer.addEventListener("touchstart", (e) => {
-            if (postsContainer.scrollTop === 0) {
+        postsContainerEl.addEventListener("touchstart", (e) => {
+            if (postsContainerEl.scrollTop === 0) {
                 startY = e.touches[0].clientY;
                 isPulling = true;
             }
         });
-        postsContainer.addEventListener("touchmove", (e) => {
+        postsContainerEl.addEventListener("touchmove", (e) => {
             if (!isPulling) return;
             let currentY = e.touches[0].clientY;
             if ((currentY - startY) > 80) { location.reload(); isPulling = false; }
         });
-        postsContainer.addEventListener("touchend", () => { isPulling = false; });
+        postsContainerEl.addEventListener("touchend", () => { isPulling = false; });
 
         document.querySelectorAll(".action-btn").forEach(btn => {
             if (btn.textContent.includes("📤")) {
@@ -952,13 +971,12 @@
                                 text: "Buna bir göz at! 👀",
                                 url: window.location.href
                             });
-                        } catch (err) { console.log("Paylaşım iptal edildi:", err); }
+                        } catch (err) { }
                     } else { alert("Cihazınız paylaşımı desteklemiyor."); }
                 });
             }
         });
 
-        /* --- REELS PULL-TO-REFRESH MANTIĞI --- */
         const reelsLoader = document.getElementById('reels-refresh-loader');
         let reelStartY = 0;
         let isReelPulling = false;
