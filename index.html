@@ -13,7 +13,7 @@
             color: #fff; 
             overflow: hidden; 
             height: 100vh;
-            height: 100dvh; /* iOS Safari adres çubuğu sorunu için */
+            height: 100dvh; 
         }
         
         /* --- HEADER & LOGO --- */
@@ -24,20 +24,19 @@
         .sound-btn { position: absolute; right: 16px; background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; padding: 8px; touch-action: manipulation; }
 
         /* --- PRELOADER & OYUN CSS --- */
-        #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; z-index: 9999; opacity: 1; transition: opacity 0.5s; overflow: hidden; padding-top: 60px; }
+        #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; z-index: 9999; opacity: 1; transition: opacity 0.5s; overflow: hidden; padding-top: 40px; }
         #preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         
-        .loader-content { text-align: center; width: 100%; margin-bottom: 10px; z-index: 10; }
-        .loader-content p { font-size: 16px; font-weight: 600; margin-bottom: 10px; letter-spacing: 2px; color: #fff; }
+        .loader-content { text-align: center; width: 100%; margin-bottom: 5px; z-index: 10; }
+        .loader-content p { font-size: 16px; font-weight: 600; margin-bottom: 5px; letter-spacing: 2px; color: #fff; }
         #loading-tip { min-height: 40px; margin: 5px auto; max-width: 80%; color: #a8a8a8; font-size: 13px; font-style: italic; transition: opacity 0.5s; }
         #loading-tip strong { color: #fff; font-weight: 600; display: block; margin-bottom: 3px; }
-        .loader-dots { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
+        .loader-dots { display: flex; justify-content: center; gap: 10px; margin-top: 5px; }
         .loader-dots div { width: 10px; height: 10px; background: #0095f6; border-radius: 50%; animation: bounce 1.2s infinite ease-in-out both; }
         .loader-dots div:nth-child(2) { animation-delay: -0.4s; }
         .loader-dots div:nth-child(3) { animation-delay: -0.8s; }
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
-        /* --- YÜKLEME EKRANI ALT LOGO KAPSAYICISI --- */
         .bottom-logo-container {
             position: absolute;
             bottom: 30px;
@@ -48,7 +47,7 @@
             align-items: center;
             padding: 0 20px;
             z-index: 20;
-            pointer-events: none; /* Oyuna tıklamayı engellememesi için */
+            pointer-events: none;
         }
 
         .bottom-logo-container img {
@@ -59,18 +58,20 @@
             display: block;
         }
 
-        /* --- TAŞ KAĞIT MAKAS OYUN CSS (DÜZELTİLMİŞ) --- */
+        /* --- TAŞ KAĞIT MAKAS OYUN CSS (GÜNCELLENDİ) --- */
         .game-wrapper {
             font-family: 'Acme', sans-serif;
             position: relative;
             width: 100%;
-            height: 350px; /* Sabit yükseklik */
+            /* Yükseklik mobilde sığması için ayarlandı */
+            height: auto; 
+            min-height: 380px;
             display: flex;
             justify-content: center;
-            transform: scale(0.7); /* Mobilde sığması için */
+            transform: scale(0.75); 
             transform-origin: top center;
-            margin-top: 20px;
-            z-index: 50; /* Logoların üstünde olması için */
+            margin-top: 10px;
+            z-index: 50;
         }
 
         .game-form {
@@ -81,16 +82,24 @@
             width: 100%;
         }
 
-        .game-title { text-align: center; color: #fff; margin-bottom: 10px; font-size: 2rem; }
+        .game-title { text-align: center; color: #fff; margin-bottom: 20px; font-size: 2.2rem; text-shadow: 0 0 10px rgba(0, 149, 246, 0.5); }
 
-        #hands { text-align: center; display: flex; align-items: center; justify-content: center; position: relative; }
+        #hands { 
+            text-align: center; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative; 
+            width: 100%;
+            margin-bottom: 30px; /* Eller ile butonlar arası boşluk */
+        }
 
         /* Oyun Animasyonları */
         @keyframes changeOrder { from { z-index: 9;} to { z-index: 1; } }
         @keyframes handShake { 0%,100% { transform: rotate(10deg); } 50% { transform: rotate(-10deg); } }
         @keyframes handShake2 { 0%,100% { transform: rotateY(180deg) rotate(10deg); } 50% { transform: rotateY(180deg) rotate(-10deg); } }
 
-        .hand { margin: 10px; width: 180px; height: 180px; position: relative; transform: rotate(10deg); display: inline-block; animation: handShake 2s infinite; pointer-events: none; /* Ele tıklayınca zoom yapmasın */ }
+        .hand { margin: 0 20px; width: 160px; height: 160px; position: relative; transform: rotate(10deg); display: inline-block; animation: handShake 2s infinite; pointer-events: none; }
         .game-input:checked ~ div .hand { animation: none !important; }
 
         .hand > div { position: absolute; box-sizing: border-box; border: 2px solid #000; background: gold; transition: all 0.1s; }
@@ -130,71 +139,75 @@
         #rock-paper:checked ~ div h2::before, #paper-scissors:checked ~ div h2::before, #scissors-rock:checked ~ div h2::before { content: "Kazandın!"; color: #4caf50; }
         #rock-scissors:checked ~ div h2::before, #paper-rock:checked ~ div h2::before, #scissors-paper:checked ~ div h2::before { content: "Bilgisayar Kazandı!"; color: #f44336; }
 
-        #message { text-align: center; display: none; margin-top: 10px; width: 100%; position: absolute; bottom: -80px; left: 0; z-index: 100; }
-        #message h2 { font-size: 2rem; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        #message { text-align: center; display: none; margin-top: 20px; width: 100%; position: absolute; bottom: -80px; left: 0; z-index: 100; }
+        #message h2 { font-size: 2.5rem; margin-bottom: 10px; text-shadow: 0 4px 8px rgba(0,0,0,0.8); }
         .game-input:checked ~ #message { display: block; }
 
-        /* iPhone Uyumlu Kontroller */
+        /* --- YENİ TUŞ TASARIMI VE KONUMLANDIRMA --- */
         #icons { 
-            width: 70px; 
-            height: 200px; 
-            display: inline-flex; 
-            flex-direction: column; 
-            margin-left: 10px; 
+            width: 100%;
+            display: flex; 
+            flex-direction: row; /* Yan yana dizilim */
+            justify-content: center;
+            gap: 25px; /* Tuşlar arası boşluk */
             position: relative;
-            z-index: 200; /* Ellerin üzerinde olması için */
-        }
-        #icons > div { 
-            flex: 1; 
-            align-items: center; 
-            justify-content: center; 
-            width: 70px; 
-            height: 60px; 
-            overflow: visible; 
-            position: relative; 
-            margin-bottom: 10px;
+            z-index: 200;
         }
         
-        /* iPhone Tıklama Alanı Düzeltmesi */
+        #icons > div { 
+            width: 75px; 
+            height: 75px; 
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
         .game-label { 
             animation: changeOrder 0.45s infinite linear; 
-            background: #f5f5f5; 
-            border: 2px solid #ccc; 
+            background: linear-gradient(145deg, #1e1e1e, #2a2a2a); /* Koyu modern arka plan */
+            border: 2px solid #0095f6; /* Stomagram mavisi */
             box-sizing: border-box; 
             cursor: pointer; 
             display: block; 
-            height: 65px; 
-            width: 65px; 
-            line-height: 60px; 
-            font-size: 2rem; 
+            height: 75px; 
+            width: 75px; 
+            line-height: 70px; 
+            font-size: 2.5rem; 
             position: absolute; 
             top: 0; 
             left: 0; 
             user-select: none; 
             text-align: center; 
-            border-radius: 12px; 
-            color: #000;
-            /* iOS Tıklama İyileştirmeleri */
+            border-radius: 18px; /* Daha yumuşak köşeler */
+            color: #fff;
             touch-action: manipulation;
             -webkit-user-select: none;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 6px 15px rgba(0, 149, 246, 0.3); /* Parlama efekti */
+            transition: transform 0.1s;
         }
+        
+        /* Tuşa basma efekti */
+        .game-label:active { 
+            transform: scale(0.9); 
+            box-shadow: 0 2px 5px rgba(0, 149, 246, 0.2);
+        }
+
         .game-label:nth-of-type(1) { animation-delay: -0.00s; }
         .game-label:nth-of-type(2) { animation-delay: -0.15s; }
         .game-label:nth-of-type(3) { animation-delay: -0.30s; }
-        
-        .game-label:active { position: static; margin-left: 0; transform: scale(0.95); }
 
         .refresh-btn { 
-            background: #0095f6; 
+            background: linear-gradient(to right, #0095f6, #005c99);
             color: white; 
             border: none; 
-            padding: 12px 30px; 
+            padding: 12px 35px; 
             font-family: 'Acme', sans-serif; 
-            font-size: 1.4rem; 
-            border-radius: 8px; 
+            font-size: 1.5rem; 
+            border-radius: 25px; 
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            margin-top: 10px;
         }
 
         /* --- GENEL STOMAGRAM STİLLERİ --- */
@@ -354,8 +367,9 @@
                       <div class="thumb"></div>
                       <div class="arm"></div>
                     </div>
-                    
-                    <div id="icons">
+                  </div>
+                  
+                  <div id="icons">
                       <div>
                         <label for="rock-rock" class="game-label">✊</label>
                         <label for="paper-rock" class="game-label">✊</label>
@@ -371,8 +385,8 @@
                         <label for="paper-scissors" class="game-label">✌</label>
                         <label for="scissors-scissors" class="game-label">✌</label>
                       </div>
-                    </div>
                   </div>
+
                 </div>
               
                 <div id="message">
@@ -522,12 +536,10 @@
                     video.preload = "auto";
                     video.currentTime = 0;
                     video.muted = false; 
-                    // iOS için Play Promise Hatasını Yakala
                     const playPromise = video.play();
                     if (playPromise !== undefined) {
                         playPromise.catch(error => {
-                            console.log("iOS Autoplay Engellendi: Kullanıcı etkileşimi bekleniyor.");
-                            video.muted = true; // Sesi kapatıp tekrar dene
+                            video.muted = true; 
                             video.play().catch(e => {});
                         });
                     }
@@ -649,8 +661,8 @@
                 setTimeout(() => preloader.style.display = 'none', 500);
             }
 
-            // iPhone için ZORUNLU Fallback (3.5 saniye sonra videolar yüklenmese bile aç)
-            setTimeout(startApp, 10000);
+            // GÜNCELLEME: Fallback süresi 4 saniyeye çekildi
+            setTimeout(startApp, 4000);
 
             function checkVideoLoaded() {
                 loadedCount++;
