@@ -524,22 +524,24 @@
             "Yükleme ekranında 10 farklı bilgi vardır."
         ];
         
-        let tipIndex = 0, tipInterval;
+        let tipInterval;
         
         function displayTip() {
             const el = document.getElementById('loading-tip');
             el.style.opacity = 0;
             setTimeout(() => {
-                el.innerHTML = `<strong>Bunu Biliyor Muydunuz:</strong> ${tips[tipIndex]}`;
+                // RASTGELE BİLGİ SEÇİMİ (0 ile tips.length arasında rastgele sayı)
+                const randomIndex = Math.floor(Math.random() * tips.length);
+                el.innerHTML = `<strong>Bunu Biliyor Muydunuz:</strong> ${tips[randomIndex]}`;
                 el.style.opacity = 1;
-                tipIndex = (tipIndex + 1) % tips.length;
             }, 500);
         }
 
+        // Başlangıçta rastgele bir bilgi göster
         const initialEl = document.getElementById('loading-tip');
-        initialEl.innerHTML = `<strong>Bunu Biliyor Muydunuz:</strong> ${tips[0]}`;
+        const startRandomIndex = Math.floor(Math.random() * tips.length);
+        initialEl.innerHTML = `<strong>Bunu Biliyor Muydunuz:</strong> ${tips[startRandomIndex]}`;
         initialEl.style.opacity = 1;
-        tipIndex = 1;
 
         tipInterval = setInterval(displayTip, 2500);
 
@@ -575,7 +577,7 @@
                     if (video.readyState >= 3) checkVideoLoaded();
                 }
             }
-            setTimeout(() => { if (!appStarted) startApp(); }, 5000);
+            // 5 Saniye kuralı buradan kaldırıldı. Artık sadece videolar yüklendiğinde açılacak.
         });
 
         window.addEventListener('online', updateOnlineStatus);
