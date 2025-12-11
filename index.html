@@ -30,6 +30,25 @@
         .loader-dots div:nth-child(3) { animation-delay: -0.8s; }
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
+        /* YÜKLEME EKRANI ALT LOGO STİLİ */
+        .bottom-logo-container {
+            position: absolute;
+            bottom: 20px; /* Sayfanın en altından ne kadar yukarıda olacağı */
+            left: 50%;
+            transform: translateX(-50%); /* Tam ortalamak için */
+            width: auto;
+            max-width: 80%; /* Mobilde ekranın %80'inden geniş olmasın */
+            z-index: 20;
+            text-align: center;
+        }
+
+        .bottom-logo-container img {
+            height: auto;
+            max-height: 60px; /* Resmin yüksekliğini buradan ayarlayabilirsin */
+            object-fit: contain;
+            display: block;
+        }
+
         /* --- TAŞ KAĞIT MAKAS OYUN CSS --- */
         .game-wrapper {
             font-family: 'Acme', sans-serif;
@@ -304,7 +323,11 @@
               
             </form>
         </div>
-    </div>
+
+        <div class="bottom-logo-container">
+            <img src="https://i.ibb.co/XzK7Q4Z/image-0.png" alt="Stomagram Logo">
+        </div>
+        </div>
 
     <div id="offline-banner">İnternet Bağlantısı Yok ⚠️</div>
     <div id="reels-refresh-loader"></div>
