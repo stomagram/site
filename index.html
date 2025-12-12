@@ -323,15 +323,16 @@
             /* Flex ve padding kaldırıldı, video absolute ile tam oturacak */
         }
         
-        .reel-bg { 
+                .reel-bg { 
             width: 100%; 
             height: 100%; 
             position: absolute; 
             top: 0; 
             left: 0;
-            /* NOT: Videolar dikey (9:16) değilse 'cover' görüntüyü yakınlaştırır. 
-               Videonun tamamı görünsün istersen 'cover' yerine 'contain' yaz. */
-            object-fit: cover; 
+            /* 'cover' yerine 'contain' kullanıyoruz. 
+               Bu sayede video kesilmez, olduğu gibi ekrana sığar. */
+            object-fit: contain; 
+            background: #000; /* Videonun altı ve üstü siyah kalır */
             z-index: 1;
         }
         
